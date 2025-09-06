@@ -89,13 +89,32 @@ export default function Home() {
       <div className='editor'>
         <div className='panel'>
           <h3>Загвар сонгох</h3>
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
-            <button className='btn' onClick={() => setTemplate('first')}>
-              Загвар 1
-            </button>
-            <button className='btn' onClick={() => setTemplate('second')}>
-              Загвар 2
-            </button>
+          <div className='template-selector'>
+            <div
+              className={`template-thumbnail ${
+                template === 'first' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('first')}
+            >
+              <div className='t1-preview'>
+                <div className='t1-header'></div>
+                <div className='t1-line'></div>
+                <div className='t1-line short'></div>
+              </div>
+              <p>Classic</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'second' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('second')}
+            >
+              <div className='t2-preview'>
+                <div className='t2-sidebar'></div>
+                <div className='t2-main'></div>
+              </div>
+              <p>Modern</p>
+            </div>
           </div>
           {/* <button
             className='btn'
