@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import Preview from '../components/Preview';
@@ -13,8 +13,14 @@ import EighthPreview from '../components/EighthPreview';
 import NinthPreview from '../components/NinthPreview';
 import TenthPreview from '../components/TenthPreview';
 
-export const initialData = {
+const initialData = {
   name: 'Золбоо Цолмон',
+  design: {
+    fontFamily: 'Inter, system-ui, sans-serif',
+    accentColor: '#0070f3',
+  },
+  avatarUrl:
+    'https://api.dicebear.com/8.x/personas/svg?seed=Золбоо&beardProbability=100&skinColor=f2d5b1',
   title: 'Frontend Developer',
   contact: {
     email: 'altangerel.b@example.com',
@@ -62,13 +68,28 @@ export const initialData = {
     'Node.js',
     'Git',
   ],
+  languages: [
+    { language: 'English', proficiency: 'Fluent' },
+    { language: 'Japanese', proficiency: 'Intermediate' },
+  ],
+  hobbies: ['Photography', 'Hiking', 'Playing Guitar'],
+  awards: [
+    {
+      name: 'Employee of the Month',
+      year: '2023',
+      from: 'Tech Solutions LLC',
+    },
+    { name: 'Hackathon Winner', year: '2022', from: 'Local Tech Meetup' },
+  ],
 };
 
 export default function Home() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(null); // Start with null until data is loaded
   const [loading, setLoading] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [template, setTemplate] = useState('first');
+  const [saveStatus, setSaveStatus] = useState('Saved');
+  const debounceTimeout = useRef(null);
 
   function update(path, value) {
     setData((prev) => {
@@ -111,6 +132,55 @@ export default function Home() {
       };
     });
   }
+
+  // Effect to fetch initial data from the database
+  useEffect(() => {
+    fetch('/api/resume')
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        // If no resume is in the DB, use the default data.
+        // This handles your "drop previous datas" request if the DB is empty.
+        return initialData;
+      })
+      .then((resumeData) => {
+        setData(resumeData);
+      })
+      .catch(() => {
+        // On network error, also fall back to default data
+        setData(initialData);
+      });
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Effect for autosaving with debouncing
+  useEffect(() => {
+    // Don't save if data hasn't been loaded yet
+    if (!data) {
+      return;
+    }
+
+    setSaveStatus('Saving...');
+
+    // Clear the previous timeout to reset the timer
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Set a new timeout
+    debounceTimeout.current = setTimeout(() => {
+      fetch('/api/resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+        .then((res) => setSaveStatus(res.ok ? 'Saved' : 'Error'))
+        .catch(() => setSaveStatus('Error'));
+    }, 1500); // Save 1.5 seconds after the last edit
+
+    // Cleanup timeout on component unmount
+    return () => clearTimeout(debounceTimeout.current);
+  }, [data]); // This effect runs whenever 'data' changes
 
   const downloadPdf = () => {
     const resumeElement = document.querySelector('.preview');
@@ -297,98 +367,137 @@ export default function Home() {
           >
             {pdfLoading ? 'Generating PDF...' : 'Download as PDF'}
           </button>
+          <div className='save-status'>{saveStatus}</div>
+        </div>
+        <div className='panel' style={{ marginTop: '24px' }}>
+          <h3>Design & Font Toolbar</h3>
+          <div className='field'>
+            <label>Accent Color</label>
+            <input
+              type='color'
+              className='color-input'
+              value={data?.design.accentColor || '#0070f3'}
+              onChange={(e) => update('design.accentColor', e.target.value)}
+            />
+          </div>
+          <div className='field'>
+            <label>Font Family</label>
+            <select
+              value={data?.design.fontFamily || 'Inter, system-ui, sans-serif'}
+              onChange={(e) => update('design.fontFamily', e.target.value)}
+            >
+              <option value='Inter, system-ui, sans-serif'>
+                Inter (Default)
+              </option>
+              <option value="'Georgia', serif">Georgia (Serif)</option>
+              <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
+              <option value="'Lato', sans-serif">Lato (Sans-serif)</option>
+              <option value="'Montserrat', sans-serif">
+                Montserrat (Sans-serif)
+              </option>
+              <option value="'Courier New', monospace">
+                Courier (Monospace)
+              </option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {template === 'first' && (
-        <Preview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'second' && (
-        <SecondPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'third' && (
-        <ThirdPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'fourth' && (
-        <FourthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'fifth' && (
-        <FifthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'sixth' && (
-        <SixthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'seventh' && (
-        <SeventhPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'eighth' && (
-        <EighthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'ninth' && (
-        <NinthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'tenth' && (
-        <TenthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
+      {!data ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          {template === 'first' && (
+            <Preview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'second' && (
+            <SecondPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'third' && (
+            <ThirdPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'fourth' && (
+            <FourthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'fifth' && (
+            <FifthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'sixth' && (
+            <SixthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'seventh' && (
+            <SeventhPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'eighth' && (
+            <EighthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'ninth' && (
+            <NinthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'tenth' && (
+            <TenthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+        </>
       )}
     </div>
   );
