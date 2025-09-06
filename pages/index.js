@@ -92,7 +92,7 @@ export default function Home() {
           onAdd={addSection}
           onRemove={removeEntry}
         />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div className='panel' style={{ padding: 12 }}>
             <button
               className='btn'
@@ -103,7 +103,7 @@ export default function Home() {
             </button>
             <p className='small'>Preview дээрээ шууд edit хийж болно 👆</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
