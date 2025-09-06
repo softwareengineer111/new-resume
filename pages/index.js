@@ -369,38 +369,6 @@ export default function Home() {
           </button>
           <div className='save-status'>{saveStatus}</div>
         </div>
-        <div className='panel' style={{ marginTop: '24px' }}>
-          <h3>Design & Font Toolbar</h3>
-          <div className='field'>
-            <label>Accent Color</label>
-            <input
-              type='color'
-              className='color-input'
-              value={data?.design.accentColor || '#0070f3'}
-              onChange={(e) => update('design.accentColor', e.target.value)}
-            />
-          </div>
-          <div className='field'>
-            <label>Font Family</label>
-            <select
-              value={data?.design.fontFamily || 'Inter, system-ui, sans-serif'}
-              onChange={(e) => update('design.fontFamily', e.target.value)}
-            >
-              <option value='Inter, system-ui, sans-serif'>
-                Inter (Default)
-              </option>
-              <option value="'Georgia', serif">Georgia (Serif)</option>
-              <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
-              <option value="'Lato', sans-serif">Lato (Sans-serif)</option>
-              <option value="'Montserrat', sans-serif">
-                Montserrat (Sans-serif)
-              </option>
-              <option value="'Courier New', monospace">
-                Courier (Monospace)
-              </option>
-            </select>
-          </div>
-        </div>
       </div>
 
       {!data ? (
