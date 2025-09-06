@@ -312,6 +312,8 @@ export default function Preview({
           box-shadow: var(--shadow);
           border-radius: 8px;
           border: 1px solid var(--border-color);
+          max-width: 800px;
+          margin: 0 auto;
         }
         .preview-header {
           text-align: center;

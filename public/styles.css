@@ -30,6 +30,8 @@ body {
   display: flex;
   gap: 24px;
   padding: 24px;
+  max-width: 1600px; /* Set a maximum width for the entire app */
+  margin: 0 auto; /* Center the app on the page */
 }
 
 .editor {
