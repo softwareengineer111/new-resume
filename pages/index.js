@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import Preview from '../components/Preview';
@@ -89,11 +90,13 @@ export default function Home() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [template, setTemplate] = useState('first');
   const [saveStatus, setSaveStatus] = useState('Saved');
+  const [resumeId, setResumeId] = useState(null);
   const debounceTimeout = useRef(null);
 
   function update(path, value) {
     setData((prev) => {
-      const newData = { ...prev };
+      // Use structuredClone for a true deep copy, preventing mutation bugs.
+      const newData = structuredClone(prev);
       const keys = path.split('.');
       let current = newData;
       for (let i = 0; i < keys.length - 1; i++) {
@@ -135,52 +138,64 @@ export default function Home() {
 
   // Effect to fetch initial data from the database
   useEffect(() => {
-    fetch('/api/resume')
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        // If no resume is in the DB, use the default data.
-        // This handles your "drop previous datas" request if the DB is empty.
-        return initialData;
-      })
-      .then((resumeData) => {
-        setData(resumeData);
-      })
-      .catch(() => {
-        // On network error, also fall back to default data
-        setData(initialData);
-      });
+    let id = localStorage.getItem('resumeId');
+
+    if (!id) {
+      // First-time visit for this browser: generate a new ID and use initial data.
+      id = uuidv4();
+      localStorage.setItem('resumeId', id);
+      setResumeId(id);
+      setData(initialData);
+      setSaveStatus('New resume created');
+    } else {
+      // Returning user: fetch their data from the database.
+      setResumeId(id);
+      setSaveStatus('Loading...');
+      fetch(`/api/resume?id=${id}`)
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+          // If not found in DB (e.g., cleared DB), treat as a new resume.
+          return initialData;
+        })
+        .then((dbData) => {
+          setData(dbData);
+          setSaveStatus('Loaded');
+        })
+        .catch(() => {
+          // On network error, use initial data as a fallback.
+          setData(initialData);
+          setSaveStatus('Error loading data');
+        });
+    }
   }, []); // Empty dependency array means this runs once on mount
 
   // Effect for autosaving with debouncing
   useEffect(() => {
-    // Don't save if data hasn't been loaded yet
-    if (!data) {
+    // Don't save if data or the resumeId is not ready
+    if (!data || !resumeId) {
       return;
     }
 
     setSaveStatus('Saving...');
 
-    // Clear the previous timeout to reset the timer
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
 
-    // Set a new timeout
     debounceTimeout.current = setTimeout(() => {
       fetch('/api/resume', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ resumeId, resumeData: data }),
       })
         .then((res) => setSaveStatus(res.ok ? 'Saved' : 'Error'))
         .catch(() => setSaveStatus('Error'));
     }, 1500); // Save 1.5 seconds after the last edit
 
-    // Cleanup timeout on component unmount
     return () => clearTimeout(debounceTimeout.current);
-  }, [data]); // This effect runs whenever 'data' changes
+  }, [data, resumeId]); // This effect runs whenever 'data' or 'resumeId' changes
 
   const downloadPdf = () => {
     const resumeElement = document.querySelector('.preview');
