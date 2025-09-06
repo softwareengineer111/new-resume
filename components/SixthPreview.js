@@ -198,8 +198,20 @@ export default function SixthPreview({
             </div>
             <div className='section'>
               <h3 className='section-title'>Skills</h3>
-              <Editable tag='p' path='skills' onUpdate={onUpdate}>
-                {data.skills.join(', ')}
+              <Editable
+                tag='p'
+                path='skills'
+                onUpdate={(path, value) => {
+                  // When the user edits the skills, the value is a single string.
+                  // We need to convert it back to an array before updating the state.
+                  const skillsArray = value
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter((s) => s);
+                  onUpdate(path, skillsArray);
+                }}
+              >
+                {Array.isArray(data.skills) ? data.skills.join(', ') : ''}
               </Editable>
             </div>
           </div>
