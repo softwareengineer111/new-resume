@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Preview from '../components/Preview';
+import SecondPreview from '../components/SecondPreview';
 
 export const initialData = {
   name: 'Золбоо Цолмон',
@@ -50,6 +51,7 @@ export const initialData = {
 export default function Home() {
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
+  const [template, setTemplate] = useState('first');
 
   function update(path, value) {
     setData((prev) => {
@@ -83,28 +85,66 @@ export default function Home() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      {/* <h2>Resume Builder (Inline Editing)</h2> */}
-      <div className='app'>
+    <div className='app'>
+      <div className='editor'>
+        <div className='panel'>
+          <h3>Загвар сонгох</h3>
+          <div className='template-selector'>
+            <div
+              className={`template-thumbnail ${
+                template === 'first' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('first')}
+            >
+              <div className='t1-preview'>
+                <div className='t1-header'></div>
+                <div className='t1-line'></div>
+                <div className='t1-line short'></div>
+              </div>
+              <p>Classic</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'second' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('second')}
+            >
+              <div className='t2-preview'>
+                <div className='t2-sidebar'></div>
+                <div className='t2-main'></div>
+              </div>
+              <p>Modern</p>
+            </div>
+          </div>
+          {/* <button
+            className='btn'
+            onClick={downloadZipServer}
+            disabled={loading}
+          >
+            {loading ? 'Бэлтгэж байна...' : 'Download ZIP'}
+          </button> */}
+          {/* <p className='small' style={{ marginTop: '12px' }}>
+            Preview дээрээ шууд edit хийж болно 👆
+          </p> */}
+        </div>
+      </div>
+
+      {template === 'first' && (
         <Preview
           data={data}
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
         />
-        {/* <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div className='panel' style={{ padding: 12 }}>
-            <button
-              className='btn'
-              onClick={downloadZipServer}
-              disabled={loading}
-            >
-              {loading ? 'Бэлтгэж байна...' : 'Download ZIP'}
-            </button>
-            <p className='small'>Preview дээрээ шууд edit хийж болно 👆</p>
-          </div>
-        </div> */}
-      </div>
+      )}
+      {template === 'second' && (
+        <SecondPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
     </div>
   );
 }
