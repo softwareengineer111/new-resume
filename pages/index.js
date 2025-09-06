@@ -88,6 +88,21 @@ export default function Home() {
     }));
   }
 
+  function reorderList(sectionName, sourceIndex, destIndex) {
+    if (sourceIndex === destIndex) return;
+
+    setData((prev) => {
+      const list = [...prev[sectionName]];
+      const [removed] = list.splice(sourceIndex, 1);
+      list.splice(destIndex, 0, removed);
+
+      return {
+        ...prev,
+        [sectionName]: list,
+      };
+    });
+  }
+
   async function downloadZipServer() {
     // ... (Энэ хэсэгт өөрчлөлт ороогүй, таны өгсөн код хэвээр үлдэнэ)
   }
@@ -225,6 +240,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'second' && (
@@ -233,6 +249,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'third' && (
@@ -241,6 +258,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'fourth' && (
@@ -249,6 +267,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'fifth' && (
@@ -257,6 +276,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'sixth' && (
@@ -265,6 +285,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'seventh' && (
@@ -273,6 +294,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'eighth' && (
@@ -281,6 +303,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'ninth' && (
@@ -289,6 +312,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
       {template === 'tenth' && (
@@ -297,6 +321,7 @@ export default function Home() {
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
+          onReorder={reorderList}
         />
       )}
     </div>

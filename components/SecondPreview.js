@@ -1,10 +1,45 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Editable from './Editable';
 
-export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
+export default function SecondPreview({
+  data,
+  onUpdate,
+  onAdd,
+  onRemove,
+  onReorder,
+}) {
+  const dragItem = useRef(null);
+  const [draggedOverSection, setDraggedOverSection] = useState('');
+  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
+
+  const handleDragStart = (e, section, index) => {
+    dragItem.current = { section, index };
+    setTimeout(() => e.target.classList.add('dragging'), 0);
+  };
+
+  const handleDragEnter = (section, index) => {
+    if (dragItem.current && dragItem.current.section === section) {
+      setDraggedOverSection(section);
+      setDraggedOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    if (
+      draggedOverIndex !== null &&
+      dragItem.current.index !== draggedOverIndex
+    ) {
+      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
+    }
+    e.target.classList.remove('dragging');
+    dragItem.current = null;
+    setDraggedOverSection('');
+    setDraggedOverIndex(null);
+  };
+
   return (
     <div className='panel preview'>
-      <div className='preview-inner-2'>
+      <div className='preview-inner-2' onDragOver={(e) => e.preventDefault()}>
         <aside className='sidebar'>
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
@@ -65,7 +100,18 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
               </button>
             </div>
             {data.education.map((edu, i) => (
-              <div key={i} className='entry'>
+              <div
+                key={i}
+                className={`entry ${
+                  draggedOverSection === 'education' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'education', i)}
+                onDragEnter={() => handleDragEnter('education', i)}
+                onDragEnd={handleDragEnd}
+              >
                 <Editable
                   tag='strong'
                   path={`education.${i}.degree`}
@@ -111,7 +157,18 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
             </div>
             <ul className='skills-list'>
               {data.skills.map((skill, i) => (
-                <li key={i}>
+                <li
+                  key={i}
+                  className={`${
+                    draggedOverSection === 'skills' && draggedOverIndex === i
+                      ? 'drag-over'
+                      : ''
+                  }`}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                  onDragEnter={() => handleDragEnter('skills', i)}
+                  onDragEnd={handleDragEnd}
+                >
                   <Editable tag='span' path={`skills.${i}`} onUpdate={onUpdate}>
                     {skill}
                   </Editable>
@@ -153,7 +210,18 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
               </button>
             </div>
             {data.experience.map((exp, i) => (
-              <div key={i} className='entry'>
+              <div
+                key={i}
+                className={`entry ${
+                  draggedOverSection === 'experience' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                onDragEnter={() => handleDragEnter('experience', i)}
+                onDragEnd={handleDragEnd}
+              >
                 <div className='entry-header'>
                   <Editable
                     tag='strong'

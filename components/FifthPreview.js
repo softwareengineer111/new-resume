@@ -1,11 +1,46 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Editable from './Editable';
 
 // A more creative layout with an avatar placeholder and icons.
-export default function FifthPreview({ data, onUpdate, onAdd, onRemove }) {
+export default function FifthPreview({
+  data,
+  onUpdate,
+  onAdd,
+  onRemove,
+  onReorder,
+}) {
+  const dragItem = useRef(null);
+  const [draggedOverSection, setDraggedOverSection] = useState('');
+  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
+
+  const handleDragStart = (e, section, index) => {
+    dragItem.current = { section, index };
+    setTimeout(() => e.target.classList.add('dragging'), 0);
+  };
+
+  const handleDragEnter = (section, index) => {
+    if (dragItem.current && dragItem.current.section === section) {
+      setDraggedOverSection(section);
+      setDraggedOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    if (
+      draggedOverIndex !== null &&
+      dragItem.current.index !== draggedOverIndex
+    ) {
+      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
+    }
+    e.target.classList.remove('dragging');
+    dragItem.current = null;
+    setDraggedOverSection('');
+    setDraggedOverIndex(null);
+  };
+
   return (
     <div className='panel preview'>
-      <div className='preview-inner-5'>
+      <div className='preview-inner-5' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
           <div className='avatar-placeholder'></div>
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
@@ -46,7 +81,18 @@ export default function FifthPreview({ data, onUpdate, onAdd, onRemove }) {
               <h3 className='section-title'>Skills</h3>
               <ul className='skills-list'>
                 {data.skills.map((skill, i) => (
-                  <li key={i}>
+                  <li
+                    key={i}
+                    className={`${
+                      draggedOverSection === 'skills' && draggedOverIndex === i
+                        ? 'drag-over'
+                        : ''
+                    }`}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                    onDragEnter={() => handleDragEnter('skills', i)}
+                    onDragEnd={handleDragEnd}
+                  >
                     <Editable
                       tag='span'
                       path={`skills.${i}`}
@@ -83,34 +129,47 @@ export default function FifthPreview({ data, onUpdate, onAdd, onRemove }) {
               <h3 className='section-title'>Experience</h3>
               {data.experience.map((exp, i) => (
                 <div key={i} className='entry'>
-                  <Editable
-                    tag='strong'
-                    path={`experience.${i}.role`}
-                    onUpdate={onUpdate}
+                  <div
+                    className={`${
+                      draggedOverSection === 'experience' &&
+                      draggedOverIndex === i
+                        ? 'drag-over'
+                        : ''
+                    }`}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                    onDragEnter={() => handleDragEnter('experience', i)}
+                    onDragEnd={handleDragEnd}
                   >
-                    {exp.role}
-                  </Editable>
-                  <Editable
-                    tag='em'
-                    path={`experience.${i}.company`}
-                    onUpdate={onUpdate}
-                  >
-                    {exp.company} | {exp.date}
-                  </Editable>
-                  <Editable
-                    tag='p'
-                    path={`experience.${i}.description`}
-                    onUpdate={onUpdate}
-                    multiline
-                  >
-                    {exp.description}
-                  </Editable>
-                  <button
-                    className='btn-remove'
-                    onClick={() => onRemove('experience', i)}
-                  >
-                    &times;
-                  </button>
+                    <Editable
+                      tag='strong'
+                      path={`experience.${i}.role`}
+                      onUpdate={onUpdate}
+                    >
+                      {exp.role}
+                    </Editable>
+                    <Editable
+                      tag='em'
+                      path={`experience.${i}.company`}
+                      onUpdate={onUpdate}
+                    >
+                      {exp.company} | {exp.date}
+                    </Editable>
+                    <Editable
+                      tag='p'
+                      path={`experience.${i}.description`}
+                      onUpdate={onUpdate}
+                      multiline
+                    >
+                      {exp.description}
+                    </Editable>
+                    <button
+                      className='btn-remove'
+                      onClick={() => onRemove('experience', i)}
+                    >
+                      &times;
+                    </button>
+                  </div>
                 </div>
               ))}
               <button
@@ -194,10 +253,12 @@ export default function FifthPreview({ data, onUpdate, onAdd, onRemove }) {
           margin-bottom: 0.5rem;
           font-size: 0.9rem;
           position: relative;
+          cursor: grab;
         }
         .entry {
           position: relative;
           margin-bottom: 1.5rem;
+          cursor: grab;
         }
         .entry strong,
         .entry em {
