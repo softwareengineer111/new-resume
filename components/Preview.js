@@ -296,6 +296,112 @@ export default function Preview({
             ))}
           </ul>
         </div>
+
+        {/* Languages Section */}
+        <div className='section'>
+          <div className='section-header'>
+            <h3 className='section-title'>Languages</h3>
+            <button
+              className='btn-add'
+              onClick={() =>
+                onAdd('languages', {
+                  language: 'Language',
+                  proficiency: 'Proficiency',
+                })
+              }
+            >
+              + Add
+            </button>
+          </div>
+          <div className='languages-list'>
+            {data.languages.map((lang, i) => (
+              <div
+                key={i}
+                className={`entry language-entry ${
+                  draggedOverSection === 'languages' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('languages', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'languages', i)}
+                >
+                  ::
+                </div>
+                <Editable
+                  tag='strong'
+                  path={`languages.${i}.language`}
+                  onUpdate={onUpdate}
+                >
+                  {lang.language}
+                </Editable>
+                <Editable
+                  tag='span'
+                  path={`languages.${i}.proficiency`}
+                  onUpdate={onUpdate}
+                >
+                  {lang.proficiency}
+                </Editable>
+                <div className='actions'>
+                  <button
+                    className='btn-remove'
+                    onClick={() => onRemove('languages', i)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Hobbies Section */}
+        <div className='section'>
+          <div className='section-header'>
+            <h3 className='section-title'>Hobbies</h3>
+            <button
+              className='btn-add'
+              onClick={() => onAdd('hobbies', 'New Hobby')}
+            >
+              + Add
+            </button>
+          </div>
+          <ul className='skills-list'>
+            {data.hobbies.map((hobby, i) => (
+              <li
+                key={i}
+                className={`${
+                  draggedOverSection === 'hobbies' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('hobbies', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'hobbies', i)}
+                >
+                  ::
+                </div>
+                <Editable tag='span' path={`hobbies.${i}`} onUpdate={onUpdate}>
+                  {hobby}
+                </Editable>
+                <button
+                  className='btn-remove'
+                  onClick={() => onRemove('hobbies', i)}
+                >
+                  &times;
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       <style jsx>{`
         .preview-inner {
@@ -453,6 +559,16 @@ export default function Preview({
           font-size: 0.9rem;
           padding-left: 1.5rem;
           transition: all 0.2s;
+        }
+        .languages-list {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1rem;
+        }
+        .language-entry {
+          display: flex;
+          justify-content: space-between;
+          padding-right: 2rem; /* space for remove button */
         }
         .skills-list li:hover {
           background: #e0e0e0;

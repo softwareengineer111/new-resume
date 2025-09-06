@@ -223,6 +223,88 @@ export default function SeventhPreview({
             +
           </button>
         </div>
+
+        <div className='section'>
+          <h3 className='section-title'>Awards & Honors</h3>
+          {data.awards.map((award, i) => (
+            <div
+              key={i}
+              className={`entry ${
+                draggedOverSection === 'awards' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('awards', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'awards', i)}
+              >
+                ::
+              </div>
+              <Editable tag='strong' path={`awards.${i}.name`}>
+                {award.name}, {award.year}
+              </Editable>
+              <Editable tag='p' path={`awards.${i}.from`}>
+                {award.from}
+              </Editable>
+            </div>
+          ))}
+        </div>
+
+        <div className='section'>
+          <h3 className='section-title'>Languages</h3>
+          <ul className='skills-list'>
+            {data.languages.map((lang, i) => (
+              <li
+                key={i}
+                className={`${
+                  draggedOverSection === 'languages' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('languages', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'languages', i)}
+                >
+                  ::
+                </div>
+                <Editable tag='span' path={`languages.${i}.language`}>
+                  {lang.language}
+                </Editable>
+                <span style={{ color: '#555' }}>({lang.proficiency})</span>
+                <button
+                  className='btn-remove'
+                  onClick={() => onRemove('languages', i)}
+                >
+                  &times;
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className='section'>
+          <h3 className='section-title'>Interests</h3>
+          <Editable
+            tag='p'
+            path='hobbies'
+            onUpdate={(path, value) =>
+              onUpdate(
+                path,
+                value.split(',').map((s) => s.trim())
+              )
+            }
+          >
+            {data.hobbies.join(', ')}
+          </Editable>
+        </div>
       </div>
       <style jsx>{`
         .preview-inner-7 {

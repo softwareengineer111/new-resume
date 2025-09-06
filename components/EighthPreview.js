@@ -173,6 +173,68 @@ export default function EighthPreview({
             ))}
           </div>
         </div>
+
+        <div className='section'>
+          <h3 className='section-title'>/languages</h3>
+          <div className='contact-grid'>
+            {data.languages.map((lang, i) => (
+              <React.Fragment key={i}>
+                <span>{lang.language}:</span>
+                <Editable tag='span' path={`languages.${i}.proficiency`}>
+                  '{lang.proficiency}'
+                </Editable>
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div className='section'>
+          <h3 className='section-title'>/awards</h3>
+          {data.awards.map((award, i) => (
+            <div
+              key={i}
+              className={`entry ${
+                draggedOverSection === 'awards' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('awards', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'awards', i)}
+              >
+                ::
+              </div>
+              <Editable tag='strong' path={`awards.${i}.name`}>
+                {award.name}
+              </Editable>
+              <Editable tag='em' path={`awards.${i}.from`}>
+                // {award.from} - {award.year}
+              </Editable>
+            </div>
+          ))}
+        </div>
+
+        <div className='section'>
+          <h3 className='section-title'>/hobbies</h3>
+          <div className='skills-container'>
+            {data.hobbies.map((hobby, i) => (
+              <div key={i} className='skill-tag-wrapper'>
+                <Editable
+                  tag='span'
+                  className='skill-tag'
+                  path={`hobbies.${i}`}
+                  onUpdate={onUpdate}
+                >
+                  {hobby}
+                </Editable>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       <style jsx>{`
         .preview-inner-8 {

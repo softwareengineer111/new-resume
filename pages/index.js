@@ -54,6 +54,19 @@ export const initialData = {
     'Node.js',
     'Git',
   ],
+  languages: [
+    { language: 'English', proficiency: 'Fluent' },
+    { language: 'Japanese', proficiency: 'Intermediate' },
+  ],
+  hobbies: ['Photography', 'Hiking', 'Playing Guitar'],
+  awards: [
+    {
+      name: 'Employee of the Month',
+      year: '2023',
+      from: 'Tech Solutions LLC',
+    },
+    { name: 'Hackathon Winner', year: '2022', from: 'Local Tech Meetup' },
+  ],
 };
 
 export default function Home() {

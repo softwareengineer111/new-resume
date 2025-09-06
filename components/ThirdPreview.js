@@ -258,6 +258,103 @@ export default function ThirdPreview({
             ))}
           </ul>
         </div>
+
+        <div className='section'>
+          <div className='section-header'>
+            <h3 className='section-title'>Languages</h3>
+            <button
+              className='btn-add'
+              onClick={() =>
+                onAdd('languages', {
+                  language: 'Language',
+                  proficiency: 'Proficiency',
+                })
+              }
+            >
+              +
+            </button>
+          </div>
+          {data.languages.map((lang, i) => (
+            <div
+              key={i}
+              className={`entry ${
+                draggedOverSection === 'languages' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('languages', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'languages', i)}
+              >
+                ::
+              </div>
+              <div className='entry-header'>
+                <Editable tag='strong' path={`languages.${i}.language`}>
+                  {lang.language}
+                </Editable>
+                <Editable tag='span' path={`languages.${i}.proficiency`}>
+                  ({lang.proficiency})
+                </Editable>
+              </div>
+              <div className='actions'>
+                <button
+                  className='btn-remove'
+                  onClick={() => onRemove('languages', i)}
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className='section'>
+          <div className='section-header'>
+            <h3 className='section-title'>Awards</h3>
+            <button
+              className='btn-add'
+              onClick={() =>
+                onAdd('awards', {
+                  name: 'Award Name',
+                  year: 'Year',
+                  from: 'Issuer',
+                })
+              }
+            >
+              +
+            </button>
+          </div>
+          {data.awards.map((award, i) => (
+            <div
+              key={i}
+              className={`entry ${
+                draggedOverSection === 'awards' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('awards', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'awards', i)}
+              >
+                ::
+              </div>
+              <Editable tag='strong' path={`awards.${i}.name`}>
+                {award.name}, {award.year}
+              </Editable>
+              <Editable tag='p' path={`awards.${i}.from`}>
+                {award.from}
+              </Editable>
+            </div>
+          ))}
+        </div>
       </div>
       <style jsx>{`
         .preview-inner-3 {

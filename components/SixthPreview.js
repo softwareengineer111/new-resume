@@ -214,6 +214,48 @@ export default function SixthPreview({
                 {Array.isArray(data.skills) ? data.skills.join(', ') : ''}
               </Editable>
             </div>
+            <div className='section'>
+              <h3 className='section-title'>Languages</h3>
+              <Editable
+                tag='p'
+                path='languages'
+                onUpdate={(path, value) => {
+                  const langArray = value
+                    .split(',')
+                    .map((s) => {
+                      const parts = s.split('(');
+                      return {
+                        language: parts[0]?.trim(),
+                        proficiency:
+                          parts[1]?.replace(')', '').trim() || 'Proficiency',
+                      };
+                    })
+                    .filter((l) => l.language);
+                  onUpdate(path, langArray);
+                }}
+              >
+                {Array.isArray(data.languages)
+                  ? data.languages
+                      .map((l) => `${l.language} (${l.proficiency})`)
+                      .join(', ')
+                  : ''}
+              </Editable>
+            </div>
+            <div className='section'>
+              <h3 className='section-title'>Hobbies</h3>
+              <Editable
+                tag='p'
+                path='hobbies'
+                onUpdate={(path, value) =>
+                  onUpdate(
+                    path,
+                    value.split(',').map((s) => s.trim())
+                  )
+                }
+              >
+                {Array.isArray(data.hobbies) ? data.hobbies.join(', ') : ''}
+              </Editable>
+            </div>
           </div>
         </div>
       </div>
