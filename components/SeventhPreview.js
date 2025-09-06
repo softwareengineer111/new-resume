@@ -44,6 +44,7 @@ export default function SeventhPreview({
     <div className='panel preview'>
       <div className='preview-inner-7' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
+          <img src={data.avatarUrl} alt={data.name} className='avatar' />
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
           </Editable>
@@ -234,6 +235,14 @@ export default function SeventhPreview({
           padding: 3rem;
           max-width: 800px;
           margin: 0 auto;
+        }
+        .avatar {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin: 0 auto 1rem;
+          border: 1px solid #eee;
         }
         .header {
           text-align: center;

@@ -44,6 +44,7 @@ export default function SixthPreview({
     <div className='panel preview'>
       <div className='preview-inner-6' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
+          <img src={data.avatarUrl} alt={data.name} className='avatar' />
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
           </Editable>
@@ -228,6 +229,13 @@ export default function SixthPreview({
           padding: 2rem;
           max-width: 800px;
           margin: 0 auto;
+        }
+        .avatar {
+          width: 90px;
+          height: 90px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin: 0 auto 1rem;
         }
         .header {
           text-align: center;

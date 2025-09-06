@@ -42,6 +42,7 @@ export default function Preview({
   return (
     <div className='panel preview'>
       <div className='preview-inner' onDragOver={(e) => e.preventDefault()}>
+        <img src={data.avatarUrl} alt={data.name} className='avatar' />
         <header className='preview-header'>
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='h1'>
             {data.name}
@@ -304,6 +305,19 @@ export default function Preview({
           box-shadow: var(--shadow);
           border-radius: 8px;
           border: 1px solid var(--border-color);
+          position: relative;
+          margin-top: 50px;
+        }
+        .avatar {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          object-fit: cover;
+          position: absolute;
+          top: -50px;
+          left: calc(50% - 50px);
+          border: 4px solid white;
+          box-shadow: var(--shadow);
         }
         .preview-header {
           text-align: center;

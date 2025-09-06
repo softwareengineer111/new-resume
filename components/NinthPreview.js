@@ -214,6 +214,15 @@ export default function NinthPreview({
           max-width: 800px;
           margin: 0 auto;
         }
+        .avatar {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+          margin: 0 auto 2rem;
+          border: 1px solid #dee2e6;
+        }
         .main-content {
           padding: 2.5rem;
         }

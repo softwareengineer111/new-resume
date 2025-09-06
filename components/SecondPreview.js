@@ -41,6 +41,7 @@ export default function SecondPreview({
     <div className='panel preview'>
       <div className='preview-inner-2' onDragOver={(e) => e.preventDefault()}>
         <aside className='sidebar'>
+          <img src={data.avatarUrl} alt={data.name} className='avatar' />
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
           </Editable>
@@ -306,6 +307,15 @@ export default function SecondPreview({
           margin-bottom: 0.5rem;
           line-height: 1.2;
           color: #fff;
+        }
+        .avatar {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+          margin: 0 auto 1rem;
+          border: 4px solid #4a5568;
         }
         .sidebar .title {
           font-size: 1.1rem;

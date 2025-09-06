@@ -56,6 +56,7 @@ export default function FourthPreview({
               {data.title}
             </Editable>
           </div>
+          <img src={data.avatarUrl} alt={data.name} className='avatar' />
           <div className='header-contact'>
             <Editable tag='div' path='contact.email' onUpdate={onUpdate}>
               {data.contact.email}
@@ -284,6 +285,14 @@ export default function FourthPreview({
           display: flex;
           justify-content: space-between;
           align-items: center;
+        }
+        .avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid #4a5568;
+          margin: 0 2rem;
         }
         .name {
           font-size: 2.5rem;

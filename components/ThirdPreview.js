@@ -43,6 +43,7 @@ export default function ThirdPreview({
     <div className='panel preview'>
       <div className='preview-inner-3' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
+          <img src={data.avatarUrl} alt={data.name} className='avatar' />
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
           </Editable>
@@ -268,6 +269,15 @@ export default function ThirdPreview({
           box-shadow: var(--shadow);
           max-width: 800px;
           margin: auto;
+        }
+        .avatar {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+          margin: 0 auto 1.5rem;
+          border: 1px solid #eee;
         }
         .header {
           text-align: center;

@@ -44,17 +44,25 @@ export default function EighthPreview({
     <div className='panel preview'>
       <div className='preview-inner-8' onDragOver={(e) => e.preventDefault()}>
         <div className='header'>
-          <Editable tag='div' path='name' onUpdate={onUpdate} className='name'>
-            <span className='prompt'>user@host:~$</span> {data.name}
-          </Editable>
-          <Editable
-            tag='div'
-            path='title'
-            onUpdate={onUpdate}
-            className='title'
-          >
-            {data.title}
-          </Editable>
+          <img src={data.avatarUrl} alt={data.name} className='avatar' />
+          <div>
+            <Editable
+              tag='div'
+              path='name'
+              onUpdate={onUpdate}
+              className='name'
+            >
+              <span className='prompt'>user@host:~$</span> {data.name}
+            </Editable>
+            <Editable
+              tag='div'
+              path='title'
+              onUpdate={onUpdate}
+              className='title'
+            >
+              {data.title}
+            </Editable>
+          </div>
         </div>
 
         <div className='section'>
@@ -186,8 +194,18 @@ export default function EighthPreview({
           max-width: 800px;
           margin: 0 auto;
         }
+        .avatar {
+          width: 60px;
+          height: 60px;
+          border-radius: 4px;
+          object-fit: cover;
+          border: 2px solid #475569;
+        }
         .header {
           margin-bottom: 2rem;
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
         }
         .name {
           font-size: 1.8rem;

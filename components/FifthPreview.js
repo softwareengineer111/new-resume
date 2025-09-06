@@ -44,7 +44,7 @@ export default function FifthPreview({
     <div className='panel preview'>
       <div className='preview-inner-5' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
-          <div className='avatar-placeholder'></div>
+          <img src={data.avatarUrl} alt={data.name} className='avatar' />
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
           </Editable>
@@ -219,13 +219,13 @@ export default function FifthPreview({
           padding: 2rem;
           border-radius: 8px 8px 0 0;
         }
-        .avatar-placeholder {
+        .avatar {
           width: 100px;
           height: 100px;
-          background: rgba(255, 255, 255, 0.2);
+          object-fit: cover;
           border-radius: 50%;
           margin: 0 auto 1rem;
-          border: 3px solid white;
+          border: 4px solid white;
         }
         .name {
           font-size: 2.2rem;
