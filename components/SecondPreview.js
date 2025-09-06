@@ -329,6 +329,7 @@ export default function SecondPreview({
         .sidebar .entry {
           margin-bottom: 1.25rem;
           position: relative;
+          cursor: grab;
         }
         .sidebar .entry strong,
         .sidebar .entry span {
@@ -359,6 +360,7 @@ export default function SecondPreview({
           display: flex;
           align-items: center;
           gap: 0.5rem;
+          cursor: grab;
         }
         .main-content {
           padding: 2.5rem;
@@ -375,6 +377,7 @@ export default function SecondPreview({
         .main-content .entry {
           margin-bottom: 1.5rem;
           position: relative;
+          cursor: grab;
         }
         .entry-header {
           display: flex;
@@ -435,6 +438,7 @@ export default function SecondPreview({
           right: 0;
           opacity: 0;
           transition: opacity 0.2s;
+          pointer-events: none; /* Allow dragging from anywhere on the entry */
         }
         .entry:hover .actions {
           opacity: 1;
@@ -450,6 +454,7 @@ export default function SecondPreview({
           display: flex;
           align-items: center;
           justify-content: center;
+          pointer-events: all; /* Make the button itself clickable */
           transition: all 0.2s;
         }
         .btn-remove:hover {
@@ -461,6 +466,7 @@ export default function SecondPreview({
           font-size: 0.8rem;
           background: #718096;
           opacity: 0;
+          pointer-events: all; /* Make the button itself clickable */
         }
         .skills-list li:hover .btn-remove {
           opacity: 1;
