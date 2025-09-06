@@ -329,9 +329,9 @@ export default function Preview({
           gap: 1.5rem;
         }
         .avatar {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          border-radius: 10%;
           object-fit: cover;
           border: 3px solid #eee;
         }
