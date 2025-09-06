@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import Preview from '../components/Preview';
 import EditableDateRange from '../components/EditableDateRange';
 import SecondPreview from '../components/SecondPreview';
@@ -65,6 +67,7 @@ export const initialData = {
 export default function Home() {
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const [template, setTemplate] = useState('first');
 
   function update(path, value) {
@@ -108,6 +111,65 @@ export default function Home() {
       };
     });
   }
+
+  const downloadPdf = () => {
+    const resumeElement = document.querySelector('.preview');
+    if (!resumeElement) {
+      console.error('Preview element not found for PDF generation.');
+      return;
+    }
+
+    setPdfLoading(true);
+
+    // Temporarily remove box-shadow for a cleaner PDF capture
+    const originalShadow = resumeElement.style.boxShadow;
+    resumeElement.style.boxShadow = 'none';
+
+    html2canvas(resumeElement, {
+      scale: 2, // Use a higher scale for better image quality
+      useCORS: true, // Necessary for external images like avatars
+      logging: false,
+    })
+      .then((canvas) => {
+        // Restore the box-shadow after capture
+        resumeElement.style.boxShadow = originalShadow;
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'pt',
+          format: 'a4',
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const ratio = canvasWidth / pdfWidth;
+        const imgHeight = canvasHeight / ratio;
+
+        // Add the image to the PDF, handling multiple pages if necessary
+        let heightLeft = imgHeight;
+        let position = 0;
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+
+        pdf.save('resume.pdf');
+        setPdfLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error generating PDF:', err);
+        resumeElement.style.boxShadow = originalShadow; // Restore shadow on error
+        setPdfLoading(false);
+      });
+  };
 
   async function downloadZipServer() {
     // ... (Энэ хэсэгт өөрчлөлт ороогүй, таны өгсөн код хэвээр үлдэнэ)
@@ -227,16 +289,14 @@ export default function Home() {
               <p>Minimal</p>
             </div>
           </div>
-          {/* <button
+          <button
             className='btn'
-            onClick={downloadZipServer}
-            disabled={loading}
+            onClick={downloadPdf}
+            disabled={pdfLoading}
+            style={{ width: '100%', marginTop: '1rem' }}
           >
-            {loading ? 'Бэлтгэж байна...' : 'Download ZIP'}
-          </button> */}
-          {/* <p className='small' style={{ marginTop: '12px' }}>
-            Preview дээрээ шууд edit хийж болно 👆
-          </p> */}
+            {pdfLoading ? 'Generating PDF...' : 'Download as PDF'}
+          </button>
         </div>
       </div>
 
