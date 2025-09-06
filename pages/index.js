@@ -84,7 +84,7 @@ export default function Home() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Resume Builder (Inline Editing)</h2>
+      {/* <h2>Resume Builder (Inline Editing)</h2> */}
       <div className='app'>
         <Preview
           data={data}
