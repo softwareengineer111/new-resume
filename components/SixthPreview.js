@@ -1,11 +1,48 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Editable from './Editable';
 
 // A compact, two-column layout designed to fit a lot of information.
-export default function SixthPreview({ data, onUpdate, onAdd, onRemove }) {
+export default function SixthPreview({
+  data,
+  onUpdate,
+  onAdd,
+  onRemove,
+  onReorder,
+}) {
+  const dragItem = useRef(null);
+  const [draggedOverSection, setDraggedOverSection] = useState('');
+  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
+
+  const handleDragStart = (e, section, index) => {
+    dragItem.current = { section, index };
+    setTimeout(() => {
+      e.target.closest('.entry').classList.add('dragging');
+    }, 0);
+  };
+
+  const handleDragEnter = (section, index) => {
+    if (dragItem.current && dragItem.current.section === section) {
+      setDraggedOverSection(section);
+      setDraggedOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    if (
+      draggedOverIndex !== null &&
+      dragItem.current.index !== draggedOverIndex
+    ) {
+      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
+    }
+    document.querySelector('.dragging')?.classList.remove('dragging');
+    dragItem.current = null;
+    setDraggedOverSection('');
+    setDraggedOverIndex(null);
+  };
+
   return (
     <div className='panel preview'>
-      <div className='preview-inner-6'>
+      <div className='preview-inner-6' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
@@ -40,7 +77,24 @@ export default function SixthPreview({ data, onUpdate, onAdd, onRemove }) {
             <div className='section'>
               <h3 className='section-title'>Experience</h3>
               {data.experience.map((exp, i) => (
-                <div key={i} className='entry'>
+                <div
+                  key={i}
+                  className={`entry ${
+                    draggedOverSection === 'experience' &&
+                    draggedOverIndex === i
+                      ? 'drag-over'
+                      : ''
+                  }`}
+                  onDragEnter={() => handleDragEnter('experience', i)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <div
+                    className='drag-handle'
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                  >
+                    ::
+                  </div>
                   <Editable
                     tag='strong'
                     path={`experience.${i}.role`}
@@ -90,7 +144,23 @@ export default function SixthPreview({ data, onUpdate, onAdd, onRemove }) {
             <div className='section'>
               <h3 className='section-title'>Education</h3>
               {data.education.map((edu, i) => (
-                <div key={i} className='entry'>
+                <div
+                  key={i}
+                  className={`entry ${
+                    draggedOverSection === 'education' && draggedOverIndex === i
+                      ? 'drag-over'
+                      : ''
+                  }`}
+                  onDragEnter={() => handleDragEnter('education', i)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <div
+                    className='drag-handle'
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'education', i)}
+                  >
+                    ::
+                  </div>
                   <Editable
                     tag='strong'
                     path={`education.${i}.degree`}
@@ -179,6 +249,7 @@ export default function SixthPreview({ data, onUpdate, onAdd, onRemove }) {
         .entry {
           position: relative;
           margin-bottom: 1rem;
+          padding-left: 1.5rem;
         }
         .entry strong,
         .entry em {
@@ -202,10 +273,35 @@ export default function SixthPreview({ data, onUpdate, onAdd, onRemove }) {
           cursor: pointer;
           font-size: 0.9rem;
           line-height: 1;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .entry:hover .btn-remove {
+          opacity: 1;
+          pointer-events: all;
         }
         .btn-add {
           position: static;
           margin-top: 0.5rem;
+          opacity: 1;
+          pointer-events: all;
+        }
+        .drag-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #ccc;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle {
+          opacity: 1;
         }
       `}</style>
     </div>

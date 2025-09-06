@@ -15,7 +15,9 @@ export default function FifthPreview({
 
   const handleDragStart = (e, section, index) => {
     dragItem.current = { section, index };
-    setTimeout(() => e.target.classList.add('dragging'), 0);
+    setTimeout(() => {
+      e.target.closest('.entry, li').classList.add('dragging');
+    }, 0);
   };
 
   const handleDragEnter = (section, index) => {
@@ -32,7 +34,7 @@ export default function FifthPreview({
     ) {
       onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
     }
-    e.target.classList.remove('dragging');
+    document.querySelector('.dragging')?.classList.remove('dragging');
     dragItem.current = null;
     setDraggedOverSection('');
     setDraggedOverIndex(null);
@@ -88,11 +90,16 @@ export default function FifthPreview({
                         ? 'drag-over'
                         : ''
                     }`}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'skills', i)}
                     onDragEnter={() => handleDragEnter('skills', i)}
                     onDragEnd={handleDragEnd}
                   >
+                    <div
+                      className='drag-handle'
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                    >
+                      ::
+                    </div>
                     <Editable
                       tag='span'
                       path={`skills.${i}`}
@@ -128,19 +135,25 @@ export default function FifthPreview({
             <div className='section'>
               <h3 className='section-title'>Experience</h3>
               {data.experience.map((exp, i) => (
-                <div key={i} className='entry'>
+                <div
+                  key={i}
+                  className={`entry ${
+                    draggedOverSection === 'experience' &&
+                    draggedOverIndex === i
+                      ? 'drag-over'
+                      : ''
+                  }`}
+                  onDragEnter={() => handleDragEnter('experience', i)}
+                  onDragEnd={handleDragEnd}
+                >
                   <div
-                    className={`${
-                      draggedOverSection === 'experience' &&
-                      draggedOverIndex === i
-                        ? 'drag-over'
-                        : ''
-                    }`}
+                    className='drag-handle'
                     draggable
                     onDragStart={(e) => handleDragStart(e, 'experience', i)}
-                    onDragEnter={() => handleDragEnter('experience', i)}
-                    onDragEnd={handleDragEnd}
                   >
+                    ::
+                  </div>
+                  <div>
                     <Editable
                       tag='strong'
                       path={`experience.${i}.role`}
@@ -253,7 +266,7 @@ export default function FifthPreview({
           margin-bottom: 0.5rem;
           font-size: 0.9rem;
           position: relative;
-          cursor: grab;
+          padding-left: 1.5rem;
         }
         .entry {
           position: relative;
@@ -284,6 +297,15 @@ export default function FifthPreview({
           width: 20px;
           height: 20px;
           cursor: pointer;
+          pointer-events: all;
+        }
+        .entry .btn-remove {
+          opacity: 0;
+          pointer-events: none;
+        }
+        .entry:hover .btn-remove {
+          opacity: 1;
+          pointer-events: all;
         }
         .skills-list .btn-remove {
           position: static;
@@ -292,6 +314,27 @@ export default function FifthPreview({
         .btn-add {
           position: static;
           margin-top: 0.5rem;
+        }
+        .drag-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #ccc;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle,
+        .skills-list li:hover .drag-handle {
+          opacity: 1;
+        }
+        .drag-handle:active {
+          cursor: grabbing;
         }
       `}</style>
     </div>

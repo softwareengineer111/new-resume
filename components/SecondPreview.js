@@ -107,11 +107,16 @@ export default function SecondPreview({
                     ? 'drag-over'
                     : ''
                 }`}
-                draggable
-                onDragStart={(e) => handleDragStart(e, 'education', i)}
                 onDragEnter={() => handleDragEnter('education', i)}
                 onDragEnd={handleDragEnd}
               >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'education', i)}
+                >
+                  ::
+                </div>
                 <Editable
                   tag='strong'
                   path={`education.${i}.degree`}
@@ -164,11 +169,16 @@ export default function SecondPreview({
                       ? 'drag-over'
                       : ''
                   }`}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, 'skills', i)}
                   onDragEnter={() => handleDragEnter('skills', i)}
                   onDragEnd={handleDragEnd}
                 >
+                  <div
+                    className='drag-handle'
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                  >
+                    ::
+                  </div>
                   <Editable tag='span' path={`skills.${i}`} onUpdate={onUpdate}>
                     {skill}
                   </Editable>
@@ -217,11 +227,16 @@ export default function SecondPreview({
                     ? 'drag-over'
                     : ''
                 }`}
-                draggable
-                onDragStart={(e) => handleDragStart(e, 'experience', i)}
                 onDragEnter={() => handleDragEnter('experience', i)}
                 onDragEnd={handleDragEnd}
               >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                >
+                  ::
+                </div>
                 <div className='entry-header'>
                   <Editable
                     tag='strong'
@@ -329,7 +344,7 @@ export default function SecondPreview({
         .sidebar .entry {
           margin-bottom: 1.25rem;
           position: relative;
-          cursor: grab;
+          padding-left: 1.5rem; /* Add space for handle */
         }
         .sidebar .entry strong,
         .sidebar .entry span {
@@ -360,7 +375,7 @@ export default function SecondPreview({
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          cursor: grab;
+          padding-left: 1.5rem; /* Add space for handle */
         }
         .main-content {
           padding: 2.5rem;
@@ -377,7 +392,7 @@ export default function SecondPreview({
         .main-content .entry {
           margin-bottom: 1.5rem;
           position: relative;
-          cursor: grab;
+          padding-left: 1.5rem; /* Add space for handle */
         }
         .entry-header {
           display: flex;
@@ -439,6 +454,27 @@ export default function SecondPreview({
           opacity: 0;
           transition: opacity 0.2s;
           pointer-events: none; /* Allow dragging from anywhere on the entry */
+        }
+        .drag-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #718096; /* A color that fits the theme */
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle,
+        .skills-list li:hover .drag-handle {
+          opacity: 1;
+        }
+        .drag-handle:active {
+          cursor: grabbing;
         }
         .entry:hover .actions {
           opacity: 1;
