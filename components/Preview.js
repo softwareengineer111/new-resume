@@ -44,12 +44,17 @@ export default function Preview({
     <div className='panel preview'>
       <div className='preview-inner' onDragOver={(e) => e.preventDefault()}>
         <header className='preview-header'>
-          <Editable tag='h1' path='name' onUpdate={onUpdate} className='h1'>
-            {data.name}
-          </Editable>
-          <Editable tag='p' path='title' onUpdate={onUpdate} className='h2'>
-            {data.title}
-          </Editable>
+          {data.avatarUrl && (
+            <img src={data.avatarUrl} alt={data.name} className='avatar' />
+          )}
+          <div>
+            <Editable tag='h1' path='name' onUpdate={onUpdate} className='h1'>
+              {data.name}
+            </Editable>
+            <Editable tag='p' path='title' onUpdate={onUpdate} className='h2'>
+              {data.title}
+            </Editable>
+          </div>
         </header>
 
         {/* Contact Section */}
@@ -316,10 +321,19 @@ export default function Preview({
           margin: 0 auto;
         }
         .preview-header {
-          text-align: center;
           margin-bottom: 2.5rem;
           border-bottom: 1px solid #eee;
           padding-bottom: 2rem;
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+        }
+        .avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid #eee;
         }
         .h1 {
           font-size: 2.2rem;
