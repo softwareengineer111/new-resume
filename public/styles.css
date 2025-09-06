@@ -380,3 +380,117 @@ body {
 .t4-body {
   padding: 8px;
 }
+
+/* Thumbnail for Template 5 (Creative) */
+.t5-preview {
+  height: 80px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  background: #fff;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.t5-preview::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #d1d5db;
+  margin-bottom: 8px;
+}
+.t5-preview::after {
+  content: '';
+  display: block;
+  width: 80%;
+  height: 5px;
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+
+/* Thumbnail for Template 6 (Compact) */
+.t6-preview {
+  height: 80px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  background: #fff;
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+}
+.t6-preview::before, .t6-preview::after {
+  content: '';
+  display: block;
+  background: #f3f4f6;
+  border-radius: 3px;
+  width: 50%;
+}
+
+/* Thumbnail for Template 7 (Academic) */
+.t7-preview {
+  height: 80px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  background: #fff;
+  padding: 8px;
+}
+.t7-preview::before {
+  content: '';
+  display: block;
+  height: 8px;
+  width: 70%;
+  background: #d1d5db;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+.t7-preview::after {
+  content: '';
+  display: block;
+  height: 30px;
+  width: 100%;
+  background: repeating-linear-gradient(#f3f4f6, #f3f4f6 4px, #fff 4px, #fff 8px);
+}
+
+/* Thumbnail for Template 8 (Tech) */
+.t8-preview {
+  height: 80px;
+  border-radius: 4px;
+  background: #1f2937;
+  padding: 8px;
+}
+.t8-preview::before {
+  content: '> _';
+  color: #4ade80;
+  font-family: monospace;
+}
+
+/* Thumbnail for Template 9 (Corporate) */
+.t9-preview {
+  height: 80px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  background: #fff;
+  display: flex;
+}
+.t9-preview::before {
+  content: '';
+  display: block;
+  width: 70%;
+  background: #f9fafb;
+}
+.t9-preview::after {
+  content: '';
+  display: block;
+  width: 30%;
+  background: #f3f4f6;
+}
+
+/* Thumbnail for Template 10 (Minimal) */
+.t10-preview {
+  height: 80px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  background: #fff;
+}

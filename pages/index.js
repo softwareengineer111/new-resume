@@ -3,6 +3,12 @@ import Preview from '../components/Preview';
 import SecondPreview from '../components/SecondPreview';
 import ThirdPreview from '../components/ThirdPreview';
 import FourthPreview from '../components/FourthPreview';
+import FifthPreview from '../components/FifthPreview';
+import SixthPreview from '../components/SixthPreview';
+import SeventhPreview from '../components/SeventhPreview';
+import EighthPreview from '../components/EighthPreview';
+import NinthPreview from '../components/NinthPreview';
+import TenthPreview from '../components/TenthPreview';
 
 export const initialData = {
   name: 'Золбоо Цолмон',
@@ -145,6 +151,60 @@ export default function Home() {
               </div>
               <p>Professional</p>
             </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'fifth' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('fifth')}
+            >
+              <div className='t5-preview'></div>
+              <p>Creative</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'sixth' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('sixth')}
+            >
+              <div className='t6-preview'></div>
+              <p>Compact</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'seventh' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('seventh')}
+            >
+              <div className='t7-preview'></div>
+              <p>Academic</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'eighth' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('eighth')}
+            >
+              <div className='t8-preview'></div>
+              <p>Tech</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'ninth' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('ninth')}
+            >
+              <div className='t9-preview'></div>
+              <p>Corporate</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'tenth' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('tenth')}
+            >
+              <div className='t10-preview'></div>
+              <p>Minimal</p>
+            </div>
           </div>
           {/* <button
             className='btn'
@@ -185,6 +245,54 @@ export default function Home() {
       )}
       {template === 'fourth' && (
         <FourthPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'fifth' && (
+        <FifthPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'sixth' && (
+        <SixthPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'seventh' && (
+        <SeventhPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'eighth' && (
+        <EighthPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'ninth' && (
+        <NinthPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'tenth' && (
+        <TenthPreview
           data={data}
           onUpdate={update}
           onAdd={addSection}
