@@ -286,8 +286,9 @@ export default function SecondPreview({
           display: grid;
           grid-template-columns: 1fr 2.2fr;
           background: #fff;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          box-shadow: var(--shadow);
           border-radius: 8px;
+          border: 1px solid var(--border-color);
           font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
           min-height: 1100px;
           max-width: 800px;

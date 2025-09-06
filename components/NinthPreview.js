@@ -208,6 +208,8 @@ export default function NinthPreview({
           display: grid;
           grid-template-columns: 2.5fr 1fr;
           background: #fff;
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow);
           font-family: 'Helvetica Neue', sans-serif;
           max-width: 800px;
           margin: 0 auto;

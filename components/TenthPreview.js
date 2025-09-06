@@ -127,6 +127,8 @@ export default function TenthPreview({ data, onUpdate, onAdd, onRemove }) {
           font-family: system-ui, -apple-system, sans-serif;
           background: #fff;
           padding: 3rem;
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow);
           max-width: 800px;
           margin: auto;
         }

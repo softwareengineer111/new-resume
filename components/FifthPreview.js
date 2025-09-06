@@ -208,6 +208,7 @@ export default function FifthPreview({
           background: #fff;
           border-radius: 8px;
           box-shadow: var(--shadow);
+          border: 1px solid var(--border-color);
           max-width: 800px;
           margin: 0 auto;
         }

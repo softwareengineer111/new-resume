@@ -223,6 +223,8 @@ export default function SixthPreview({
           font-size: 0.9rem;
           line-height: 1.5;
           background: #fff;
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow);
           padding: 2rem;
           max-width: 800px;
           margin: 0 auto;

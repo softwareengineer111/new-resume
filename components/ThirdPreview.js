@@ -264,6 +264,8 @@ export default function ThirdPreview({
           font-family: 'Garamond', 'Times New Roman', serif;
           padding: 3rem;
           background: #fff;
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow);
           max-width: 800px;
           margin: auto;
         }

@@ -181,6 +181,8 @@ export default function EighthPreview({
           color: #e2e8f0;
           padding: 2rem;
           border-radius: 8px;
+          border: 1px solid #334155; /* Darker border for dark theme */
+          box-shadow: var(--shadow);
           max-width: 800px;
           margin: 0 auto;
         }

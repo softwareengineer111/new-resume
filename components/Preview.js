@@ -301,8 +301,9 @@ export default function Preview({
         .preview-inner {
           background: #fff;
           padding: 2.5rem;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          box-shadow: var(--shadow);
           border-radius: 8px;
+          border: 1px solid var(--border-color);
         }
         .preview-header {
           text-align: center;

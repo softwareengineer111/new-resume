@@ -272,6 +272,8 @@ export default function FourthPreview({
         .preview-inner-4 {
           font-family: 'Roboto', sans-serif;
           background: #fff;
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow);
           max-width: 800px;
           margin: 0 auto;
         }

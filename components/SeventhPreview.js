@@ -229,6 +229,8 @@ export default function SeventhPreview({
           font-family: 'Times New Roman', serif;
           line-height: 1.6;
           background: #fff;
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow);
           padding: 3rem;
           max-width: 800px;
           margin: 0 auto;
