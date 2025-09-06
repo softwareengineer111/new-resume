@@ -207,6 +207,8 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
           border-radius: 8px;
           font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
           min-height: 1100px;
+          max-width: 800px;
+          margin: 0 auto;
         }
         .sidebar {
           background: #2d3748;

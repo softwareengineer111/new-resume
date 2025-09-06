@@ -145,6 +145,8 @@ export default function SeventhPreview({ data, onUpdate, onAdd, onRemove }) {
           line-height: 1.6;
           background: #fff;
           padding: 3rem;
+          max-width: 800px;
+          margin: 0 auto;
         }
         .header {
           text-align: center;

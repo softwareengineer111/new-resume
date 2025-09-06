@@ -136,6 +136,8 @@ export default function FifthPreview({ data, onUpdate, onAdd, onRemove }) {
           background: #fff;
           border-radius: 8px;
           box-shadow: var(--shadow);
+          max-width: 800px;
+          margin: 0 auto;
         }
         .header {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

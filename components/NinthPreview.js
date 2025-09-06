@@ -140,6 +140,8 @@ export default function NinthPreview({ data, onUpdate, onAdd, onRemove }) {
           grid-template-columns: 2.5fr 1fr;
           background: #fff;
           font-family: 'Helvetica Neue', sans-serif;
+          max-width: 800px;
+          margin: 0 auto;
         }
         .main-content {
           padding: 2.5rem;

@@ -142,6 +142,8 @@ export default function SixthPreview({ data, onUpdate, onAdd, onRemove }) {
           line-height: 1.5;
           background: #fff;
           padding: 2rem;
+          max-width: 800px;
+          margin: 0 auto;
         }
         .header {
           text-align: center;

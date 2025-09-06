@@ -187,6 +187,8 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
         .preview-inner-4 {
           font-family: 'Roboto', sans-serif;
           background: #fff;
+          max-width: 800px;
+          margin: 0 auto;
         }
         .header {
           background: #1a202c;

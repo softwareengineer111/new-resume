@@ -111,6 +111,8 @@ export default function EighthPreview({ data, onUpdate, onAdd, onRemove }) {
           color: #e2e8f0;
           padding: 2rem;
           border-radius: 8px;
+          max-width: 800px;
+          margin: 0 auto;
         }
         .header {
           margin-bottom: 2rem;
