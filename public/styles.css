@@ -30,8 +30,6 @@ body {
   display: flex;
   gap: 24px;
   padding: 24px;
-  /* Establish a 3D space for child elements */
-  perspective: 1800px;
 }
 
 .editor {
@@ -44,12 +42,6 @@ body {
 .preview {
   flex: 1;
   min-width: 360px;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform: rotateY(8deg);
-}
-
-.preview:hover {
-  transform: rotateY(0deg);
 }
 
 @media (max-width: 900px) {
