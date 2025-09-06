@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import Preview from '../components/Preview';
@@ -13,66 +14,74 @@ import EighthPreview from '../components/EighthPreview';
 import NinthPreview from '../components/NinthPreview';
 import TenthPreview from '../components/TenthPreview';
 
-export const initialData = {
-  name: 'Золбоо Цолмон',
-  title: 'Frontend Developer',
-  contact: {
-    email: 'altangerel.b@example.com',
-    phone: '+976 9911-XXXX',
-    linkedin: 'linkedin.com/in/altangerel',
-    website: 'www.altangerel.dev',
+const initialData = {
+  name: 'Firstname Lastname',
+  design: {
+    fontFamily: 'Inter, system-ui, sans-serif',
+    accentColor: '#0070f3',
   },
-  summary: 'Өөрийн танилцуулга, ур чадвар, туршлагаа багтаасан товч мэдээлэл.',
+  avatarUrl: 'https://api.dicebear.com/8.x/initials/svg?seed=John%20Doe',
+  title: 'Job Title (e.g. Software Engineer)',
+  contact: {
+    email: 'your.email@example.com',
+    phone: '(555) 123-4567',
+    linkedin: 'linkedin.com/in/yourname',
+    website: 'yourportfolio.com',
+  },
+  summary:
+    'A brief and compelling summary about your professional background, skills, and career goals. Highlight what makes you a great fit for the role you are applying for.',
   experience: [
     {
-      role: 'Frontend Developer',
-      company: 'Tech Solutions LLC',
+      role: 'Job Title',
+      company: 'Company Name',
       startDate: '2023-01',
       endDate: '',
       isCurrent: true,
       description:
-        'React, Next.js, TypeScript ашиглан вэб аппликейшн хөгжүүлэх, API интеграци хийх гэх мэт.',
-    },
-    {
-      role: 'Junior Web Developer',
-      company: 'Digital Agency',
-      startDate: '2021-03',
-      endDate: '2022-12',
-      isCurrent: false,
-      description:
-        'HTML, CSS, JavaScript ашиглан вэб хуудас үүсгэх, дизайн хийх, сервер талын хөгжүүлэлтэд туслах.',
+        'Describe your responsibilities and achievements in this role. Use bullet points to list key accomplishments and the technologies you used.',
     },
   ],
   education: [
     {
-      degree: 'Компьютерийн ухааны бакалавр',
-      university: 'МУИС',
+      degree: 'Degree or Certificate',
+      university: 'University or Institution Name',
       startDate: '2017-09',
       endDate: '2021-06',
       details:
-        'Өгөгдлийн бүтэц, алгоритм, вэб хөгжүүлэлт, програмчлалын хэлний хичээлүүд.',
+        'Mention any relevant coursework, academic achievements, or extracurricular activities.',
     },
   ],
   skills: [
-    'JavaScript (ES6+)',
-    'React.js',
-    'Next.js',
-    'TypeScript',
-    'HTML & CSS',
-    'Node.js',
-    'Git',
+    'Skill 1 (e.g., JavaScript)',
+    'Skill 2 (e.g., React.js)',
+    'Skill 3 (e.g., Project Management)',
+  ],
+  languages: [
+    { language: 'Language', proficiency: 'Proficiency (e.g., Fluent)' },
+  ],
+  hobbies: ['Hobby 1', 'Hobby 2'],
+  awards: [
+    {
+      name: 'Award or Honor Name',
+      year: 'Year',
+      from: 'Awarding Institution',
+    },
   ],
 };
 
 export default function Home() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(null); // Start with null until data is loaded
   const [loading, setLoading] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [template, setTemplate] = useState('first');
+  const [saveStatus, setSaveStatus] = useState('Saved');
+  const [resumeId, setResumeId] = useState(null);
+  const debounceTimeout = useRef(null);
 
   function update(path, value) {
     setData((prev) => {
-      const newData = { ...prev };
+      // Use structuredClone for a true deep copy, preventing mutation bugs.
+      const newData = structuredClone(prev);
       const keys = path.split('.');
       let current = newData;
       for (let i = 0; i < keys.length - 1; i++) {
@@ -111,6 +120,67 @@ export default function Home() {
       };
     });
   }
+
+  // Effect to fetch initial data from the database
+  useEffect(() => {
+    let id = localStorage.getItem('resumeId');
+
+    if (!id) {
+      // First-time visit for this browser: generate a new ID and use initial data.
+      id = uuidv4();
+      localStorage.setItem('resumeId', id);
+      setResumeId(id);
+      setData(initialData);
+      setSaveStatus('New resume created');
+    } else {
+      // Returning user: fetch their data from the database.
+      setResumeId(id);
+      setSaveStatus('Loading...');
+      fetch(`/api/resume?id=${id}`)
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+          // If not found in DB (e.g., cleared DB), treat as a new resume.
+          return initialData;
+        })
+        .then((dbData) => {
+          setData(dbData);
+          setSaveStatus('Loaded');
+        })
+        .catch(() => {
+          // On network error, use initial data as a fallback.
+          setData(initialData);
+          setSaveStatus('Error loading data');
+        });
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Effect for autosaving with debouncing
+  useEffect(() => {
+    // Don't save if data or the resumeId is not ready
+    if (!data || !resumeId) {
+      return;
+    }
+
+    setSaveStatus('Saving...');
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      fetch('/api/resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeId, resumeData: data }),
+      })
+        .then((res) => setSaveStatus(res.ok ? 'Saved' : 'Error'))
+        .catch(() => setSaveStatus('Error'));
+    }, 1500); // Save 1.5 seconds after the last edit
+
+    return () => clearTimeout(debounceTimeout.current);
+  }, [data, resumeId]); // This effect runs whenever 'data' or 'resumeId' changes
 
   const downloadPdf = () => {
     const resumeElement = document.querySelector('.preview');
@@ -297,98 +367,105 @@ export default function Home() {
           >
             {pdfLoading ? 'Generating PDF...' : 'Download as PDF'}
           </button>
+          <div className='save-status'>{saveStatus}</div>
         </div>
       </div>
 
-      {template === 'first' && (
-        <Preview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'second' && (
-        <SecondPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'third' && (
-        <ThirdPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'fourth' && (
-        <FourthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'fifth' && (
-        <FifthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'sixth' && (
-        <SixthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'seventh' && (
-        <SeventhPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'eighth' && (
-        <EighthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'ninth' && (
-        <NinthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
-      )}
-      {template === 'tenth' && (
-        <TenthPreview
-          data={data}
-          onUpdate={update}
-          onAdd={addSection}
-          onRemove={removeEntry}
-          onReorder={reorderList}
-        />
+      {!data ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          {template === 'first' && (
+            <Preview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'second' && (
+            <SecondPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'third' && (
+            <ThirdPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'fourth' && (
+            <FourthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'fifth' && (
+            <FifthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'sixth' && (
+            <SixthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'seventh' && (
+            <SeventhPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'eighth' && (
+            <EighthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'ninth' && (
+            <NinthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'tenth' && (
+            <TenthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+        </>
       )}
     </div>
   );
