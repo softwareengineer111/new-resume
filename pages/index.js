@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Preview from '../components/Preview';
 
 export const initialData = {
-  name: 'Алтангэрэл Батгэрэл',
+  name: 'Золбоо Цолмон',
   title: 'Frontend Developer',
   contact: {
     email: 'altangerel.b@example.com',
