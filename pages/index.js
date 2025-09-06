@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Preview from '../components/Preview';
+import SecondPreview from '../components/SecondPreview';
 
 export const initialData = {
   name: 'Золбоо Цолмон',
@@ -50,6 +51,7 @@ export const initialData = {
 export default function Home() {
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
+  const [template, setTemplate] = useState('first');
 
   function update(path, value) {
     setData((prev) => {
@@ -83,28 +85,47 @@ export default function Home() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      {/* <h2>Resume Builder (Inline Editing)</h2> */}
-      <div className='app'>
+    <div className='app'>
+      <div className='editor'>
+        <div className='panel'>
+          <h3>Загвар сонгох</h3>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+            <button className='btn' onClick={() => setTemplate('first')}>
+              Загвар 1
+            </button>
+            <button className='btn' onClick={() => setTemplate('second')}>
+              Загвар 2
+            </button>
+          </div>
+          {/* <button
+            className='btn'
+            onClick={downloadZipServer}
+            disabled={loading}
+          >
+            {loading ? 'Бэлтгэж байна...' : 'Download ZIP'}
+          </button> */}
+          {/* <p className='small' style={{ marginTop: '12px' }}>
+            Preview дээрээ шууд edit хийж болно 👆
+          </p> */}
+        </div>
+      </div>
+
+      {template === 'first' && (
         <Preview
           data={data}
           onUpdate={update}
           onAdd={addSection}
           onRemove={removeEntry}
         />
-        {/* <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div className='panel' style={{ padding: 12 }}>
-            <button
-              className='btn'
-              onClick={downloadZipServer}
-              disabled={loading}
-            >
-              {loading ? 'Бэлтгэж байна...' : 'Download ZIP'}
-            </button>
-            <p className='small'>Preview дээрээ шууд edit хийж болно 👆</p>
-          </div>
-        </div> */}
-      </div>
+      )}
+      {template === 'second' && (
+        <SecondPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
     </div>
   );
 }
