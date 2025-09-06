@@ -13,6 +13,8 @@ import TenthPreview from '../components/TenthPreview';
 export const initialData = {
   name: 'Золбоо Цолмон',
   title: 'Frontend Developer',
+  avatarUrl:
+    'https://i.ibb.co/TBM3pz35/default-avatar-profile-icon-grey-photo-placeholder-grayscale-avatar-user-profile-person-icon-silhoue.jpg',
   contact: {
     email: 'altangerel.b@example.com',
     phone: '+976 9911-XXXX',
