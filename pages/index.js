@@ -13,6 +13,8 @@ import SeventhPreview from '../components/SeventhPreview';
 import EighthPreview from '../components/EighthPreview';
 import NinthPreview from '../components/NinthPreview';
 import TenthPreview from '../components/TenthPreview';
+import EleventhPreview from '../components/EleventhPreview';
+import TwelfthPreview from '../components/TwelfthPreview';
 
 const initialData = {
   name: 'Firstname Lastname',
@@ -354,6 +356,24 @@ export default function Home() {
               <div className='t10-preview'></div>
               <p>Minimal</p>
             </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'eleventh' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('eleventh')}
+            >
+              <div className='t11-preview'></div>
+              <p>Chronological</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'twelfth' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('twelfth')}
+            >
+              <div className='t12-preview'></div>
+              <p>Artistic</p>
+            </div>
           </div>
           <button
             className='btn'
@@ -454,6 +474,24 @@ export default function Home() {
           )}
           {template === 'tenth' && (
             <TenthPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'eleventh' && (
+            <EleventhPreview
+              data={data}
+              onUpdate={update}
+              onAdd={addSection}
+              onRemove={removeEntry}
+              onReorder={reorderList}
+            />
+          )}
+          {template === 'twelfth' && (
+            <TwelfthPreview
               data={data}
               onUpdate={update}
               onAdd={addSection}
