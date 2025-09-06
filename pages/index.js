@@ -241,10 +241,6 @@ export default function Home() {
       });
   };
 
-  async function downloadZipServer() {
-    // ... (Энэ хэсэгт өөрчлөлт ороогүй, таны өгсөн код хэвээр үлдэнэ)
-  }
-
   return (
     <div className='app'>
       <div className='editor'>
