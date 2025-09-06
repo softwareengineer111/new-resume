@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Preview from '../components/Preview';
 import SecondPreview from '../components/SecondPreview';
+import ThirdPreview from '../components/ThirdPreview';
+import FourthPreview from '../components/FourthPreview';
 
 export const initialData = {
   name: 'Золбоо Цолмон',
@@ -115,6 +117,34 @@ export default function Home() {
               </div>
               <p>Modern</p>
             </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'third' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('third')}
+            >
+              <div className='t3-preview'>
+                <div className='t3-header'></div>
+                <div className='t3-line'></div>
+                <div className='t3-line short'></div>
+              </div>
+              <p>Elegant</p>
+            </div>
+            <div
+              className={`template-thumbnail ${
+                template === 'fourth' ? 'active' : ''
+              }`}
+              onClick={() => setTemplate('fourth')}
+            >
+              <div className='t4-preview'>
+                <div className='t4-header'>
+                  <div className='t4-header-main'></div>
+                  <div className='t4-header-side'></div>
+                </div>
+                <div className='t4-body'></div>
+              </div>
+              <p>Professional</p>
+            </div>
           </div>
           {/* <button
             className='btn'
@@ -139,6 +169,22 @@ export default function Home() {
       )}
       {template === 'second' && (
         <SecondPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'third' && (
+        <ThirdPreview
+          data={data}
+          onUpdate={update}
+          onAdd={addSection}
+          onRemove={removeEntry}
+        />
+      )}
+      {template === 'fourth' && (
+        <FourthPreview
           data={data}
           onUpdate={update}
           onAdd={addSection}

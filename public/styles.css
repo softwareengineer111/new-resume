@@ -253,6 +253,7 @@ body {
 .template-selector {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
@@ -327,4 +328,55 @@ body {
   width: 65%;
   background: #f9fafb;
   border-radius: 0 4px 4px 0;
+}
+
+/* Thumbnail for Template 3 (Elegant) */
+.t3-preview {
+  height: 80px;
+  background: #fdfdfe;
+  border-radius: 4px;
+  padding: 8px;
+  border: 1px solid #eee;
+}
+.t3-header {
+  height: 10px;
+  width: 50%;
+  background: #d1d5db;
+  margin: 4px auto 6px auto;
+  border-radius: 4px;
+}
+.t3-line {
+  height: 5px;
+  background: #e5e7eb;
+  margin-bottom: 6px;
+  border-radius: 4px;
+}
+.t3-line.short {
+  width: 80%;
+}
+
+/* Thumbnail for Template 4 (Professional) */
+.t4-preview {
+  height: 80px;
+  background: #f9fafb;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+.t4-header {
+  height: 24px;
+  background: #2d3748;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+}
+.t4-header-main {
+  width: 40%;
+  height: 8px;
+  background: #718096;
+  border-radius: 4px;
+}
+.t4-body {
+  padding: 8px;
 }
