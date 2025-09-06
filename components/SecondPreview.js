@@ -1,10 +1,45 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Editable from './Editable';
 
-export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
+export default function SecondPreview({
+  data,
+  onUpdate,
+  onAdd,
+  onRemove,
+  onReorder,
+}) {
+  const dragItem = useRef(null);
+  const [draggedOverSection, setDraggedOverSection] = useState('');
+  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
+
+  const handleDragStart = (e, section, index) => {
+    dragItem.current = { section, index };
+    setTimeout(() => e.target.classList.add('dragging'), 0);
+  };
+
+  const handleDragEnter = (section, index) => {
+    if (dragItem.current && dragItem.current.section === section) {
+      setDraggedOverSection(section);
+      setDraggedOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    if (
+      draggedOverIndex !== null &&
+      dragItem.current.index !== draggedOverIndex
+    ) {
+      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
+    }
+    e.target.classList.remove('dragging');
+    dragItem.current = null;
+    setDraggedOverSection('');
+    setDraggedOverIndex(null);
+  };
+
   return (
     <div className='panel preview'>
-      <div className='preview-inner-2'>
+      <div className='preview-inner-2' onDragOver={(e) => e.preventDefault()}>
         <aside className='sidebar'>
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
@@ -65,7 +100,23 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
               </button>
             </div>
             {data.education.map((edu, i) => (
-              <div key={i} className='entry'>
+              <div
+                key={i}
+                className={`entry ${
+                  draggedOverSection === 'education' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('education', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'education', i)}
+                >
+                  ::
+                </div>
                 <Editable
                   tag='strong'
                   path={`education.${i}.degree`}
@@ -111,7 +162,23 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
             </div>
             <ul className='skills-list'>
               {data.skills.map((skill, i) => (
-                <li key={i}>
+                <li
+                  key={i}
+                  className={`${
+                    draggedOverSection === 'skills' && draggedOverIndex === i
+                      ? 'drag-over'
+                      : ''
+                  }`}
+                  onDragEnter={() => handleDragEnter('skills', i)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <div
+                    className='drag-handle'
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                  >
+                    ::
+                  </div>
                   <Editable tag='span' path={`skills.${i}`} onUpdate={onUpdate}>
                     {skill}
                   </Editable>
@@ -153,7 +220,23 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
               </button>
             </div>
             {data.experience.map((exp, i) => (
-              <div key={i} className='entry'>
+              <div
+                key={i}
+                className={`entry ${
+                  draggedOverSection === 'experience' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('experience', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                >
+                  ::
+                </div>
                 <div className='entry-header'>
                   <Editable
                     tag='strong'
@@ -261,6 +344,7 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
         .sidebar .entry {
           margin-bottom: 1.25rem;
           position: relative;
+          padding-left: 1.5rem; /* Add space for handle */
         }
         .sidebar .entry strong,
         .sidebar .entry span {
@@ -291,6 +375,7 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
+          padding-left: 1.5rem; /* Add space for handle */
         }
         .main-content {
           padding: 2.5rem;
@@ -307,6 +392,7 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
         .main-content .entry {
           margin-bottom: 1.5rem;
           position: relative;
+          padding-left: 1.5rem; /* Add space for handle */
         }
         .entry-header {
           display: flex;
@@ -367,6 +453,28 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
           right: 0;
           opacity: 0;
           transition: opacity 0.2s;
+          pointer-events: none; /* Allow dragging from anywhere on the entry */
+        }
+        .drag-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #718096; /* A color that fits the theme */
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle,
+        .skills-list li:hover .drag-handle {
+          opacity: 1;
+        }
+        .drag-handle:active {
+          cursor: grabbing;
         }
         .entry:hover .actions {
           opacity: 1;
@@ -382,6 +490,7 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
           display: flex;
           align-items: center;
           justify-content: center;
+          pointer-events: all; /* Make the button itself clickable */
           transition: all 0.2s;
         }
         .btn-remove:hover {
@@ -393,6 +502,7 @@ export default function SecondPreview({ data, onUpdate, onAdd, onRemove }) {
           font-size: 0.8rem;
           background: #718096;
           opacity: 0;
+          pointer-events: all; /* Make the button itself clickable */
         }
         .skills-list li:hover .btn-remove {
           opacity: 1;

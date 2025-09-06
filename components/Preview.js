@@ -1,10 +1,47 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Editable from './Editable';
 
-export default function Preview({ data, onUpdate, onAdd, onRemove }) {
+export default function Preview({
+  data,
+  onUpdate,
+  onAdd,
+  onRemove,
+  onReorder,
+}) {
+  const dragItem = useRef(null);
+  const [draggedOverSection, setDraggedOverSection] = useState('');
+  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
+
+  const handleDragStart = (e, section, index) => {
+    dragItem.current = { section, index };
+    setTimeout(() => {
+      e.target.closest('.entry, li').classList.add('dragging');
+    }, 0);
+  };
+
+  const handleDragEnter = (section, index) => {
+    if (dragItem.current && dragItem.current.section === section) {
+      setDraggedOverSection(section);
+      setDraggedOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    if (
+      draggedOverIndex !== null &&
+      dragItem.current.index !== draggedOverIndex
+    ) {
+      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
+    }
+    document.querySelector('.dragging')?.classList.remove('dragging');
+    dragItem.current = null;
+    setDraggedOverSection('');
+    setDraggedOverIndex(null);
+  };
+
   return (
     <div className='panel preview'>
-      <div className='preview-inner'>
+      <div className='preview-inner' onDragOver={(e) => e.preventDefault()}>
         <header className='preview-header'>
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='h1'>
             {data.name}
@@ -73,7 +110,23 @@ export default function Preview({ data, onUpdate, onAdd, onRemove }) {
             </button>
           </div>
           {data.experience.map((exp, i) => (
-            <div key={i} className='entry'>
+            <div
+              key={i}
+              className={`entry ${
+                draggedOverSection === 'experience' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('experience', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'experience', i)}
+              >
+                ::
+              </div>
               <div className='entry-header'>
                 <Editable
                   tag='strong'
@@ -138,7 +191,23 @@ export default function Preview({ data, onUpdate, onAdd, onRemove }) {
             </button>
           </div>
           {data.education.map((edu, i) => (
-            <div key={i} className='entry'>
+            <div
+              key={i}
+              className={`entry ${
+                draggedOverSection === 'education' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('education', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'education', i)}
+              >
+                ::
+              </div>
               <div className='entry-header'>
                 <Editable
                   tag='strong'
@@ -197,7 +266,23 @@ export default function Preview({ data, onUpdate, onAdd, onRemove }) {
           </div>
           <ul className='skills-list'>
             {data.skills.map((skill, i) => (
-              <li key={i}>
+              <li
+                key={i}
+                className={`${
+                  draggedOverSection === 'skills' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('skills', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                >
+                  ::
+                </div>
                 <Editable tag='span' path={`skills.${i}`} onUpdate={onUpdate}>
                   {skill}
                 </Editable>
@@ -295,6 +380,7 @@ export default function Preview({ data, onUpdate, onAdd, onRemove }) {
           top: 0.5rem;
           right: 0.5rem;
           opacity: 0;
+          pointer-events: none;
           transition: opacity 0.2s ease-in-out;
         }
         .entry:hover .actions {
@@ -313,6 +399,7 @@ export default function Preview({ data, onUpdate, onAdd, onRemove }) {
           display: flex;
           align-items: center;
           justify-content: center;
+          pointer-events: all;
           transition: all 0.2s;
         }
         .btn-remove:hover {
@@ -363,6 +450,7 @@ export default function Preview({ data, onUpdate, onAdd, onRemove }) {
           align-items: center;
           gap: 0.5rem;
           font-size: 0.9rem;
+          padding-left: 1.5rem;
           transition: all 0.2s;
         }
         .skills-list li:hover {
@@ -376,6 +464,27 @@ export default function Preview({ data, onUpdate, onAdd, onRemove }) {
           width: 20px;
           height: 20px;
           font-size: 0.9rem;
+        }
+        .drag-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #ccc;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle,
+        .skills-list li:hover .drag-handle {
+          opacity: 1;
+        }
+        .drag-handle:active {
+          cursor: grabbing;
         }
         :global(.editable) {
           outline: none;

@@ -402,6 +402,22 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+/* 8. Drag and Drop Styles */
+.dragging {
+  opacity: 0.4;
+}
+
+.drag-over {
+  /* A general indicator */
+  background-color: #eaf5ff !important;
+}
+
+.entry.drag-over {
+  /* Specific for entry items */
+  border-left: 3px solid var(--accent) !important;
+  box-shadow: inset 3px 0 0 0 var(--accent);
+}
 .t5-preview::before {
   content: '';
   display: block;

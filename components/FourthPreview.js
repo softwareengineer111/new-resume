@@ -1,10 +1,47 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Editable from './Editable';
 
-export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
+export default function FourthPreview({
+  data,
+  onUpdate,
+  onAdd,
+  onRemove,
+  onReorder,
+}) {
+  const dragItem = useRef(null);
+  const [draggedOverSection, setDraggedOverSection] = useState('');
+  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
+
+  const handleDragStart = (e, section, index) => {
+    dragItem.current = { section, index };
+    setTimeout(() => {
+      e.target.closest('.entry, li').classList.add('dragging');
+    }, 0);
+  };
+
+  const handleDragEnter = (section, index) => {
+    if (dragItem.current && dragItem.current.section === section) {
+      setDraggedOverSection(section);
+      setDraggedOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    if (
+      draggedOverIndex !== null &&
+      dragItem.current.index !== draggedOverIndex
+    ) {
+      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
+    }
+    document.querySelector('.dragging')?.classList.remove('dragging');
+    dragItem.current = null;
+    setDraggedOverSection('');
+    setDraggedOverIndex(null);
+  };
+
   return (
     <div className='panel preview'>
-      <div className='preview-inner-4'>
+      <div className='preview-inner-4' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
           <div className='header-main'>
             <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
@@ -58,7 +95,23 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
               </button>
             </div>
             {data.experience.map((exp, i) => (
-              <div key={i} className='entry'>
+              <div
+                key={i}
+                className={`entry ${
+                  draggedOverSection === 'experience' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('experience', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                >
+                  ::
+                </div>
                 <div className='entry-header'>
                   <Editable
                     tag='strong'
@@ -120,7 +173,23 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
               </button>
             </div>
             {data.education.map((edu, i) => (
-              <div key={i} className='entry'>
+              <div
+                key={i}
+                className={`entry ${
+                  draggedOverSection === 'education' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('education', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'education', i)}
+                >
+                  ::
+                </div>
                 <Editable
                   tag='strong'
                   path={`education.${i}.degree`}
@@ -167,7 +236,23 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
             </div>
             <ul className='skills-list'>
               {data.skills.map((skill, i) => (
-                <li key={i}>
+                <li
+                  key={i}
+                  className={`${
+                    draggedOverSection === 'skills' && draggedOverIndex === i
+                      ? 'drag-over'
+                      : ''
+                  }`}
+                  onDragEnter={() => handleDragEnter('skills', i)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <div
+                    className='drag-handle'
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                  >
+                    ::
+                  </div>
                   <Editable tag='span' path={`skills.${i}`} onUpdate={onUpdate}>
                     {skill}
                   </Editable>
@@ -237,6 +322,7 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
           position: relative;
           margin-bottom: 1.5rem;
           padding-left: 1.5rem;
+          padding-left: 2rem;
           border-left: 3px solid #cbd5e0;
         }
         .entry-header {
@@ -271,6 +357,8 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
+          position: relative;
+          padding-left: 1.5rem;
         }
         .actions {
           position: absolute;
@@ -278,6 +366,7 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
           right: 0;
           opacity: 0;
           transition: opacity 0.2s;
+          pointer-events: none;
         }
         .entry:hover .actions {
           opacity: 1;
@@ -291,6 +380,7 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
           width: 22px;
           height: 22px;
           cursor: pointer;
+          pointer-events: all;
           transition: all 0.2s;
         }
         .btn-add:hover {
@@ -304,6 +394,27 @@ export default function FourthPreview({ data, onUpdate, onAdd, onRemove }) {
         .btn-remove:hover {
           background: #f56565;
           color: #fff;
+        }
+        .drag-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #ccc;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle,
+        .skills-list li:hover .drag-handle {
+          opacity: 1;
+        }
+        .drag-handle:active {
+          cursor: grabbing;
         }
         :global(.editable:focus) {
           box-shadow: 0 0 0 2px rgba(45, 55, 72, 0.3);

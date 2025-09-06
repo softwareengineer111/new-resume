@@ -1,11 +1,48 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Editable from './Editable';
 
 // A tech-focused, dark-theme style resume.
-export default function EighthPreview({ data, onUpdate, onAdd, onRemove }) {
+export default function EighthPreview({
+  data,
+  onUpdate,
+  onAdd,
+  onRemove,
+  onReorder,
+}) {
+  const dragItem = useRef(null);
+  const [draggedOverSection, setDraggedOverSection] = useState('');
+  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
+
+  const handleDragStart = (e, section, index) => {
+    dragItem.current = { section, index };
+    setTimeout(() => {
+      e.target.closest('.entry, .skill-tag-wrapper').classList.add('dragging');
+    }, 0);
+  };
+
+  const handleDragEnter = (section, index) => {
+    if (dragItem.current && dragItem.current.section === section) {
+      setDraggedOverSection(section);
+      setDraggedOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    if (
+      draggedOverIndex !== null &&
+      dragItem.current.index !== draggedOverIndex
+    ) {
+      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
+    }
+    document.querySelector('.dragging')?.classList.remove('dragging');
+    dragItem.current = null;
+    setDraggedOverSection('');
+    setDraggedOverIndex(null);
+  };
+
   return (
     <div className='panel preview'>
-      <div className='preview-inner-8'>
+      <div className='preview-inner-8' onDragOver={(e) => e.preventDefault()}>
         <div className='header'>
           <Editable tag='div' path='name' onUpdate={onUpdate} className='name'>
             <span className='prompt'>user@host:~$</span> {data.name}
@@ -41,7 +78,23 @@ export default function EighthPreview({ data, onUpdate, onAdd, onRemove }) {
         <div className='section'>
           <h3 className='section-title'>/experience</h3>
           {data.experience.map((exp, i) => (
-            <div key={i} className='entry'>
+            <div
+              key={i}
+              className={`entry ${
+                draggedOverSection === 'experience' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('experience', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'experience', i)}
+              >
+                ::
+              </div>
               <Editable
                 tag='strong'
                 path={`experience.${i}.role`}
@@ -91,15 +144,32 @@ export default function EighthPreview({ data, onUpdate, onAdd, onRemove }) {
           <h3 className='section-title'>/skills</h3>
           <div className='skills-container'>
             {data.skills.map((skill, i) => (
-              <Editable
+              <div
                 key={i}
-                tag='span'
-                className='skill-tag'
-                path={`skills.${i}`}
-                onUpdate={onUpdate}
+                className={`skill-tag-wrapper ${
+                  draggedOverSection === 'skills' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`}
+                onDragEnter={() => handleDragEnter('skills', i)}
+                onDragEnd={handleDragEnd}
               >
-                {skill}
-              </Editable>
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                >
+                  ::
+                </div>
+                <Editable
+                  tag='span'
+                  className='skill-tag'
+                  path={`skills.${i}`}
+                  onUpdate={onUpdate}
+                >
+                  {skill}
+                </Editable>
+              </div>
             ))}
           </div>
         </div>
@@ -147,7 +217,7 @@ export default function EighthPreview({ data, onUpdate, onAdd, onRemove }) {
         }
         .entry {
           position: relative;
-          border-left: 2px solid #475569;
+          border-left: 2px solid #475569; /* Fallback */
           padding-left: 1rem;
           margin-bottom: 1rem;
         }
@@ -164,10 +234,19 @@ export default function EighthPreview({ data, onUpdate, onAdd, onRemove }) {
           flex-wrap: wrap;
           gap: 0.5rem;
         }
+        .skill-tag-wrapper {
+          position: relative;
+        }
         .skill-tag {
           background: #334155;
           padding: 0.2rem 0.6rem;
           border-radius: 4px;
+          display: block;
+        }
+        .skill-tag-wrapper .drag-handle {
+          color: #64748b;
+          width: 1rem;
+          left: -1rem;
         }
         .btn-add,
         .btn-remove {
@@ -179,11 +258,40 @@ export default function EighthPreview({ data, onUpdate, onAdd, onRemove }) {
           border-radius: 4px;
           color: #94a3b8;
           cursor: pointer;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .entry:hover .btn-remove {
+          opacity: 1;
+          pointer-events: all;
         }
         .btn-add {
           position: static;
           margin-top: 0.5rem;
           padding: 0.2rem 0.5rem;
+          opacity: 1;
+          pointer-events: all;
+        }
+        .drag-handle {
+          position: absolute;
+          left: -1.5rem;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #475569;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle,
+        .skill-tag-wrapper:hover .drag-handle {
+          opacity: 1;
+        }
+        .drag-handle:active {
+          cursor: grabbing;
         }
       `}</style>
     </div>
