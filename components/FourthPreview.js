@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editable from './Editable';
+import EditableDateRange from './EditableDateRange';
 
 export default function FourthPreview({
   data,
@@ -128,14 +129,18 @@ export default function FourthPreview({
                     {exp.company}
                   </Editable>
                 </div>
-                <Editable
-                  tag='em'
+                <EditableDateRange
                   className='date'
-                  path={`experience.${i}.date`}
-                  onUpdate={onUpdate}
-                >
-                  {exp.date}
-                </Editable>
+                  startDate={exp.startDate}
+                  endDate={exp.endDate}
+                  isCurrent={exp.isCurrent}
+                  onUpdate={(newDates) => {
+                    onUpdate(`experience.${i}.startDate`, newDates.startDate);
+                    onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                    onUpdate(`experience.${i}.isCurrent`, newDates.isCurrent);
+                  }}
+                  showCurrentOption={true}
+                />
                 <Editable
                   tag='p'
                   path={`experience.${i}.description`}
@@ -204,14 +209,17 @@ export default function FourthPreview({
                 >
                   {edu.university}
                 </Editable>
-                <Editable
-                  tag='em'
+                <EditableDateRange
                   className='date'
-                  path={`education.${i}.date`}
-                  onUpdate={onUpdate}
-                >
-                  {edu.date}
-                </Editable>
+                  startDate={edu.startDate}
+                  endDate={edu.endDate}
+                  isCurrent={false}
+                  onUpdate={(newDates) => {
+                    onUpdate(`education.${i}.startDate`, newDates.startDate);
+                    onUpdate(`education.${i}.endDate`, newDates.endDate);
+                  }}
+                  showCurrentOption={false}
+                />
                 <div className='actions'>
                   <button
                     className='btn-remove'

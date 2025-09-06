@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editable from './Editable';
+import EditableDateRange from './EditableDateRange';
 
 export default function SecondPreview({
   data,
@@ -131,13 +132,17 @@ export default function SecondPreview({
                 >
                   {edu.university}
                 </Editable>
-                <Editable
-                  tag='span'
-                  path={`education.${i}.date`}
-                  onUpdate={onUpdate}
-                >
-                  {edu.date}
-                </Editable>
+                <EditableDateRange
+                  startDate={edu.startDate}
+                  endDate={edu.endDate}
+                  isCurrent={false}
+                  onUpdate={(newDates) => {
+                    onUpdate(`education.${i}.startDate`, newDates.startDate);
+                    onUpdate(`education.${i}.endDate`, newDates.endDate);
+                  }}
+                  showCurrentOption={false}
+                  className='date'
+                />
                 <div className='actions'>
                   <button
                     className='btn-remove'
@@ -252,13 +257,18 @@ export default function SecondPreview({
                   >
                     {exp.company}
                   </Editable>
-                  <Editable
-                    tag='span'
-                    path={`experience.${i}.date`}
-                    onUpdate={onUpdate}
-                  >
-                    {exp.date}
-                  </Editable>
+                  <EditableDateRange
+                    startDate={exp.startDate}
+                    endDate={exp.endDate}
+                    isCurrent={exp.isCurrent}
+                    onUpdate={(newDates) => {
+                      onUpdate(`experience.${i}.startDate`, newDates.startDate);
+                      onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                      onUpdate(`experience.${i}.isCurrent`, newDates.isCurrent);
+                    }}
+                    showCurrentOption={true}
+                    className='date'
+                  />
                 </div>
                 <Editable
                   tag='p'

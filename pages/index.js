@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Preview from '../components/Preview';
+import EditableDateRange from '../components/EditableDateRange';
 import SecondPreview from '../components/SecondPreview';
 import ThirdPreview from '../components/ThirdPreview';
 import FourthPreview from '../components/FourthPreview';
@@ -24,14 +25,18 @@ export const initialData = {
     {
       role: 'Frontend Developer',
       company: 'Tech Solutions LLC',
-      date: '2023 — Одоог хүртэл',
+      startDate: '2023-01',
+      endDate: '',
+      isCurrent: true,
       description:
         'React, Next.js, TypeScript ашиглан вэб аппликейшн хөгжүүлэх, API интеграци хийх гэх мэт.',
     },
     {
       role: 'Junior Web Developer',
       company: 'Digital Agency',
-      date: '2021 — 2023',
+      startDate: '2021-03',
+      endDate: '2022-12',
+      isCurrent: false,
       description:
         'HTML, CSS, JavaScript ашиглан вэб хуудас үүсгэх, дизайн хийх, сервер талын хөгжүүлэлтэд туслах.',
     },
@@ -40,7 +45,8 @@ export const initialData = {
     {
       degree: 'Компьютерийн ухааны бакалавр',
       university: 'МУИС',
-      date: '2017 — 2021',
+      startDate: '2017-09',
+      endDate: '2021-06',
       details:
         'Өгөгдлийн бүтэц, алгоритм, вэб хөгжүүлэлт, програмчлалын хэлний хичээлүүд.',
     },

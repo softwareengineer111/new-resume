@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editable from './Editable';
+import EditableDateRange from './EditableDateRange';
 
 // A clean, corporate layout with a right-hand sidebar.
 export default function NinthPreview({
@@ -90,13 +91,27 @@ export default function NinthPreview({
                 >
                   {exp.role}
                 </Editable>
-                <Editable
-                  tag='em'
-                  path={`experience.${i}.company`}
-                  onUpdate={onUpdate}
-                >
-                  {exp.company} | {exp.date}
-                </Editable>
+                <em>
+                  <Editable
+                    tag='span'
+                    path={`experience.${i}.company`}
+                    onUpdate={onUpdate}
+                  >
+                    {exp.company}
+                  </Editable>{' '}
+                  |{' '}
+                  <EditableDateRange
+                    startDate={exp.startDate}
+                    endDate={exp.endDate}
+                    isCurrent={exp.isCurrent}
+                    onUpdate={(newDates) => {
+                      onUpdate(`experience.${i}.startDate`, newDates.startDate);
+                      onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                      onUpdate(`experience.${i}.isCurrent`, newDates.isCurrent);
+                    }}
+                    showCurrentOption={true}
+                  />
+                </em>
                 <Editable
                   tag='p'
                   path={`experience.${i}.description`}
@@ -173,13 +188,24 @@ export default function NinthPreview({
                 >
                   {edu.degree}
                 </Editable>
-                <Editable
-                  tag='p'
-                  path={`education.${i}.university`}
-                  onUpdate={onUpdate}
-                >
-                  {edu.university}, {edu.date}
-                </Editable>
+                <p>
+                  <Editable
+                    tag='span'
+                    path={`education.${i}.university`}
+                    onUpdate={onUpdate}
+                  >
+                    {edu.university}
+                  </Editable>
+                  ,{' '}
+                  <EditableDateRange
+                    startDate={edu.startDate}
+                    endDate={edu.endDate}
+                    onUpdate={(newDates) => {
+                      onUpdate(`education.${i}.startDate`, newDates.startDate);
+                      onUpdate(`education.${i}.endDate`, newDates.endDate);
+                    }}
+                  />
+                </p>
                 <button
                   className='btn-remove'
                   onClick={() => onRemove('education', i)}

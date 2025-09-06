@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editable from './Editable';
+import EditableDateRange from './EditableDateRange';
 
 // A formal, academic-style CV layout.
 export default function SeventhPreview({
@@ -82,13 +83,24 @@ export default function SeventhPreview({
               >
                 ::
               </div>
-              <Editable
-                tag='strong'
-                path={`education.${i}.degree`}
-                onUpdate={onUpdate}
-              >
-                {edu.degree}, {edu.date}
-              </Editable>
+              <strong>
+                <Editable
+                  tag='span'
+                  path={`education.${i}.degree`}
+                  onUpdate={onUpdate}
+                >
+                  {edu.degree}
+                </Editable>
+                ,{' '}
+                <EditableDateRange
+                  startDate={edu.startDate}
+                  endDate={edu.endDate}
+                  onUpdate={(newDates) => {
+                    onUpdate(`education.${i}.startDate`, newDates.startDate);
+                    onUpdate(`education.${i}.endDate`, newDates.endDate);
+                  }}
+                />
+              </strong>
               <Editable
                 tag='p'
                 path={`education.${i}.university`}
@@ -138,20 +150,34 @@ export default function SeventhPreview({
               >
                 ::
               </div>
-              <Editable
-                tag='strong'
-                path={`experience.${i}.role`}
-                onUpdate={onUpdate}
-              >
-                {exp.role}, {exp.company}
-              </Editable>
-              <Editable
-                tag='em'
-                path={`experience.${i}.date`}
-                onUpdate={onUpdate}
-              >
-                {exp.date}
-              </Editable>
+              <strong>
+                <Editable
+                  tag='span'
+                  path={`experience.${i}.role`}
+                  onUpdate={onUpdate}
+                >
+                  {exp.role}
+                </Editable>
+                ,{' '}
+                <Editable
+                  tag='span'
+                  path={`experience.${i}.company`}
+                  onUpdate={onUpdate}
+                >
+                  {exp.company}
+                </Editable>
+              </strong>
+              <EditableDateRange
+                startDate={exp.startDate}
+                endDate={exp.endDate}
+                isCurrent={exp.isCurrent}
+                onUpdate={(newDates) => {
+                  onUpdate(`experience.${i}.startDate`, newDates.startDate);
+                  onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                  onUpdate(`experience.${i}.isCurrent`, newDates.isCurrent);
+                }}
+                showCurrentOption={true}
+              />
               <Editable
                 tag='p'
                 path={`experience.${i}.description`}

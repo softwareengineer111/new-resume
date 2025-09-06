@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editable from './Editable';
+import EditableDateRange from './EditableDateRange';
 
 // A tech-focused, dark-theme style resume.
 export default function EighthPreview({
@@ -102,13 +103,20 @@ export default function EighthPreview({
               >
                 {exp.role} @ {exp.company}
               </Editable>
-              <Editable
-                tag='em'
-                path={`experience.${i}.date`}
-                onUpdate={onUpdate}
-              >
-                // {exp.date}
-              </Editable>
+              <em>
+                //{' '}
+                <EditableDateRange
+                  startDate={exp.startDate}
+                  endDate={exp.endDate}
+                  isCurrent={exp.isCurrent}
+                  onUpdate={(newDates) => {
+                    onUpdate(`experience.${i}.startDate`, newDates.startDate);
+                    onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                    onUpdate(`experience.${i}.isCurrent`, newDates.isCurrent);
+                  }}
+                  showCurrentOption={true}
+                />
+              </em>
               <Editable
                 tag='p'
                 path={`experience.${i}.description`}

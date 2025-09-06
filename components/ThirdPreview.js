@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editable from './Editable';
+import EditableDateRange from './EditableDateRange';
 
 export default function ThirdPreview({
   data,
@@ -127,14 +128,18 @@ export default function ThirdPreview({
                   {exp.company}
                 </Editable>
               </div>
-              <Editable
-                tag='em'
+              <EditableDateRange
                 className='date'
-                path={`experience.${i}.date`}
-                onUpdate={onUpdate}
-              >
-                {exp.date}
-              </Editable>
+                startDate={exp.startDate}
+                endDate={exp.endDate}
+                isCurrent={exp.isCurrent}
+                onUpdate={(newDates) => {
+                  onUpdate(`experience.${i}.startDate`, newDates.startDate);
+                  onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                  onUpdate(`experience.${i}.isCurrent`, newDates.isCurrent);
+                }}
+                showCurrentOption={true}
+              />
               <Editable
                 tag='p'
                 path={`experience.${i}.description`}
@@ -197,13 +202,24 @@ export default function ThirdPreview({
               >
                 {edu.degree}
               </Editable>
-              <Editable
-                tag='p'
-                path={`education.${i}.university`}
-                onUpdate={onUpdate}
-              >
-                {edu.university}, {edu.date}
-              </Editable>
+              <p>
+                <Editable
+                  tag='span'
+                  path={`education.${i}.university`}
+                  onUpdate={onUpdate}
+                >
+                  {edu.university}
+                </Editable>
+                ,{' '}
+                <EditableDateRange
+                  startDate={edu.startDate}
+                  endDate={edu.endDate}
+                  onUpdate={(newDates) => {
+                    onUpdate(`education.${i}.startDate`, newDates.startDate);
+                    onUpdate(`education.${i}.endDate`, newDates.endDate);
+                  }}
+                />
+              </p>
               <div className='actions'>
                 <button
                   className='btn-remove'

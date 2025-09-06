@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editable from './Editable';
+import EditableDateRange from './EditableDateRange';
 
 // A more creative layout with an avatar placeholder and icons.
 export default function FifthPreview({
@@ -15,9 +16,7 @@ export default function FifthPreview({
 
   const handleDragStart = (e, section, index) => {
     dragItem.current = { section, index };
-    setTimeout(() => {
-      e.target.closest('.entry, li').classList.add('dragging');
-    }, 0);
+    setTimeout(() => e.target.classList.add('dragging'), 0);
   };
 
   const handleDragEnter = (section, index) => {
@@ -34,7 +33,7 @@ export default function FifthPreview({
     ) {
       onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
     }
-    document.querySelector('.dragging')?.classList.remove('dragging');
+    e.target.classList.remove('dragging');
     dragItem.current = null;
     setDraggedOverSection('');
     setDraggedOverIndex(null);
@@ -90,16 +89,11 @@ export default function FifthPreview({
                         ? 'drag-over'
                         : ''
                     }`}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, 'skills', i)}
                     onDragEnter={() => handleDragEnter('skills', i)}
                     onDragEnd={handleDragEnd}
                   >
-                    <div
-                      className='drag-handle'
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, 'skills', i)}
-                    >
-                      ::
-                    </div>
                     <Editable
                       tag='span'
                       path={`skills.${i}`}
@@ -135,39 +129,53 @@ export default function FifthPreview({
             <div className='section'>
               <h3 className='section-title'>Experience</h3>
               {data.experience.map((exp, i) => (
-                <div
-                  key={i}
-                  className={`entry ${
-                    draggedOverSection === 'experience' &&
-                    draggedOverIndex === i
-                      ? 'drag-over'
-                      : ''
-                  }`}
-                  onDragEnter={() => handleDragEnter('experience', i)}
-                  onDragEnd={handleDragEnd}
-                >
+                <div key={i} className='entry'>
                   <div
-                    className='drag-handle'
+                    className={`${
+                      draggedOverSection === 'experience' &&
+                      draggedOverIndex === i
+                        ? 'drag-over'
+                        : ''
+                    }`}
                     draggable
                     onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                    onDragEnter={() => handleDragEnter('experience', i)}
+                    onDragEnd={handleDragEnd}
                   >
-                    ::
-                  </div>
-                  <div>
                     <Editable
                       tag='strong'
-                      path={`experience.${i}.role`}
+                      path={`experience.${i}.role`} // This path is now wrong
                       onUpdate={onUpdate}
                     >
                       {exp.role}
                     </Editable>
-                    <Editable
-                      tag='em'
-                      path={`experience.${i}.company`}
-                      onUpdate={onUpdate}
-                    >
-                      {exp.company} | {exp.date}
-                    </Editable>
+                    <em>
+                      <Editable
+                        tag='span'
+                        path={`experience.${i}.company`}
+                        onUpdate={onUpdate}
+                      >
+                        {exp.company}
+                      </Editable>{' '}
+                      |{' '}
+                      <EditableDateRange
+                        startDate={exp.startDate}
+                        endDate={exp.endDate}
+                        isCurrent={exp.isCurrent}
+                        onUpdate={(newDates) => {
+                          onUpdate(
+                            `experience.${i}.startDate`,
+                            newDates.startDate
+                          );
+                          onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                          onUpdate(
+                            `experience.${i}.isCurrent`,
+                            newDates.isCurrent
+                          );
+                        }}
+                        showCurrentOption={true}
+                      />
+                    </em>
                     <Editable
                       tag='p'
                       path={`experience.${i}.description`}
@@ -208,7 +216,6 @@ export default function FifthPreview({
           background: #fff;
           border-radius: 8px;
           box-shadow: var(--shadow);
-          border: 1px solid var(--border-color);
           max-width: 800px;
           margin: 0 auto;
         }
@@ -267,7 +274,7 @@ export default function FifthPreview({
           margin-bottom: 0.5rem;
           font-size: 0.9rem;
           position: relative;
-          padding-left: 1.5rem;
+          cursor: grab;
         }
         .entry {
           position: relative;
@@ -298,15 +305,6 @@ export default function FifthPreview({
           width: 20px;
           height: 20px;
           cursor: pointer;
-          pointer-events: all;
-        }
-        .entry .btn-remove {
-          opacity: 0;
-          pointer-events: none;
-        }
-        .entry:hover .btn-remove {
-          opacity: 1;
-          pointer-events: all;
         }
         .skills-list .btn-remove {
           position: static;
@@ -315,27 +313,6 @@ export default function FifthPreview({
         .btn-add {
           position: static;
           margin-top: 0.5rem;
-        }
-        .drag-handle {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 1.5rem;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: grab;
-          color: #ccc;
-          opacity: 0;
-          transition: opacity 0.2s;
-        }
-        .entry:hover .drag-handle,
-        .skills-list li:hover .drag-handle {
-          opacity: 1;
-        }
-        .drag-handle:active {
-          cursor: grabbing;
         }
       `}</style>
     </div>
