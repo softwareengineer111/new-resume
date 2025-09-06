@@ -15,72 +15,57 @@ import NinthPreview from '../components/NinthPreview';
 import TenthPreview from '../components/TenthPreview';
 
 const initialData = {
-  name: 'Золбоо Цолмон',
+  name: 'Firstname Lastname',
   design: {
     fontFamily: 'Inter, system-ui, sans-serif',
     accentColor: '#0070f3',
   },
-  avatarUrl:
-    'https://api.dicebear.com/8.x/personas/svg?seed=Золбоо&beardProbability=100&skinColor=f2d5b1',
-  title: 'Frontend Developer',
+  avatarUrl: 'https://api.dicebear.com/8.x/initials/svg?seed=John%20Doe',
+  title: 'Job Title (e.g. Software Engineer)',
   contact: {
-    email: 'altangerel.b@example.com',
-    phone: '+976 9911-XXXX',
-    linkedin: 'linkedin.com/in/altangerel',
-    website: 'www.altangerel.dev',
+    email: 'your.email@example.com',
+    phone: '(555) 123-4567',
+    linkedin: 'linkedin.com/in/yourname',
+    website: 'yourportfolio.com',
   },
-  summary: 'Өөрийн танилцуулга, ур чадвар, туршлагаа багтаасан товч мэдээлэл.',
+  summary:
+    'A brief and compelling summary about your professional background, skills, and career goals. Highlight what makes you a great fit for the role you are applying for.',
   experience: [
     {
-      role: 'Frontend Developer',
-      company: 'Tech Solutions LLC',
+      role: 'Job Title',
+      company: 'Company Name',
       startDate: '2023-01',
       endDate: '',
       isCurrent: true,
       description:
-        'React, Next.js, TypeScript ашиглан вэб аппликейшн хөгжүүлэх, API интеграци хийх гэх мэт.',
-    },
-    {
-      role: 'Junior Web Developer',
-      company: 'Digital Agency',
-      startDate: '2021-03',
-      endDate: '2022-12',
-      isCurrent: false,
-      description:
-        'HTML, CSS, JavaScript ашиглан вэб хуудас үүсгэх, дизайн хийх, сервер талын хөгжүүлэлтэд туслах.',
+        'Describe your responsibilities and achievements in this role. Use bullet points to list key accomplishments and the technologies you used.',
     },
   ],
   education: [
     {
-      degree: 'Компьютерийн ухааны бакалавр',
-      university: 'МУИС',
+      degree: 'Degree or Certificate',
+      university: 'University or Institution Name',
       startDate: '2017-09',
       endDate: '2021-06',
       details:
-        'Өгөгдлийн бүтэц, алгоритм, вэб хөгжүүлэлт, програмчлалын хэлний хичээлүүд.',
+        'Mention any relevant coursework, academic achievements, or extracurricular activities.',
     },
   ],
   skills: [
-    'JavaScript (ES6+)',
-    'React.js',
-    'Next.js',
-    'TypeScript',
-    'HTML & CSS',
-    'Node.js',
-    'Git',
+    'Skill 1 (e.g., JavaScript)',
+    'Skill 2 (e.g., React.js)',
+    'Skill 3 (e.g., Project Management)',
   ],
   languages: [
-    { language: 'English', proficiency: 'Fluent' },
-    { language: 'Japanese', proficiency: 'Intermediate' },
+    { language: 'Language', proficiency: 'Proficiency (e.g., Fluent)' },
   ],
-  hobbies: ['Photography', 'Hiking', 'Playing Guitar'],
+  hobbies: ['Hobby 1', 'Hobby 2'],
   awards: [
     {
-      name: 'Employee of the Month',
-      year: '2023',
-      from: 'Tech Solutions LLC',
+      name: 'Award or Honor Name',
+      year: 'Year',
+      from: 'Awarding Institution',
     },
-    { name: 'Hackathon Winner', year: '2022', from: 'Local Tech Meetup' },
   ],
 };
 
