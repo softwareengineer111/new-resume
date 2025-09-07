@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -20,51 +20,54 @@ export default function EditableDateRange({
   const [localEndDate, setLocalEndDate] = useState(endDate);
   const [localIsCurrent, setLocalIsCurrent] = useState(isCurrent);
   const wrapperRef = useRef(null);
+  const isInitialRenderForEdit = useRef(true);
 
-  const handleSave = useCallback(() => {
-    onUpdate({
-      startDate: localStartDate,
-      endDate: localIsCurrent ? '' : localEndDate,
-      isCurrent: showCurrentOption ? localIsCurrent : false,
-    });
-    setIsEditing(false);
-  }, [
-    onUpdate,
-    localStartDate,
-    localEndDate,
-    localIsCurrent,
-    showCurrentOption,
-  ]);
-
-  const handleCancel = useCallback(() => {
-    // Reset state to original props
-    setLocalStartDate(startDate);
-    setLocalEndDate(endDate);
-    setLocalIsCurrent(isCurrent);
-    setIsEditing(false);
-  }, [startDate, endDate, isCurrent]);
-
-  // Click outside to cancel
+  // Click outside to close the popover
   useEffect(() => {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         if (isEditing) {
-          handleCancel();
+          setIsEditing(false);
         }
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [wrapperRef, isEditing, handleCancel]);
+  }, [isEditing]);
 
-  // When editing starts, sync local state with current props
+  // When editing starts, sync local state with current props and set initial flag
   useEffect(() => {
     if (isEditing) {
+      isInitialRenderForEdit.current = true;
       setLocalStartDate(startDate);
       setLocalEndDate(endDate);
       setLocalIsCurrent(isCurrent);
     }
   }, [isEditing, startDate, endDate, isCurrent]);
+
+  // Real-time updates to parent component
+  useEffect(() => {
+    if (!isEditing) return;
+
+    // Prevents update on the initial opening of the popover
+    if (isInitialRenderForEdit.current) {
+      isInitialRenderForEdit.current = false;
+      return;
+    }
+
+    onUpdate({
+      startDate: localStartDate,
+      endDate: localIsCurrent ? '' : localEndDate,
+      isCurrent: showCurrentOption ? localIsCurrent : false,
+    });
+  }, [
+    localStartDate,
+    localEndDate,
+    localIsCurrent,
+    onUpdate,
+    showCurrentOption,
+    isEditing,
+  ]);
 
   return (
     <div className={`date-range-wrapper ${className}`} ref={wrapperRef}>
@@ -98,8 +101,8 @@ export default function EditableDateRange({
             </div>
           </div>
 
-          <div className='date-editor-footer'>
-            {showCurrentOption && (
+          {showCurrentOption && (
+            <div className='date-editor-footer'>
               <label className='date-editor-current-label'>
                 <input
                   type='checkbox'
@@ -108,16 +111,8 @@ export default function EditableDateRange({
                 />
                 Present
               </label>
-            )}
-            <div className='date-editor-buttons'>
-              <button onClick={handleCancel} className='btn-cancel'>
-                Cancel
-              </button>
-              <button onClick={handleSave} className='btn-save'>
-                Save
-              </button>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
