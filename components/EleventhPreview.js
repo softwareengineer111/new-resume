@@ -1,5 +1,5 @@
-import Editable from './Editable';
-import EditableDateRange from './EditableDateRange';
+import Editable from '../common/Editable';
+import EditableDateRange from '../common/EditableDateRange';
 
 const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
   return (

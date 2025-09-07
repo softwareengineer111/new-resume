@@ -1,7 +1,7 @@
 import React from 'react';
-import Editable from './Editable';
-import EditableDateRange from './EditableDateRange';
-import { useDragAndDrop } from './useDragAndDrop';
+import Editable from '../common/Editable';
+import EditableDateRange from '../common/EditableDateRange';
+import { useDragAndDrop } from '../common/useDragAndDrop';
 
 // A tech-focused, dark-theme style resume.
 export default function EighthPreview({

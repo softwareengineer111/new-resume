@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import Preview from '../components/Preview';
-import EditableDateRange from '../components/EditableDateRange';
+import EditableDateRange from '../common/EditableDateRange';
 import SecondPreview from '../components/SecondPreview';
 import ThirdPreview from '../components/ThirdPreview';
 import FourthPreview from '../components/FourthPreview';

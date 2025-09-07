@@ -1,7 +1,7 @@
 import React from 'react';
-import Editable from './Editable';
-import EditableDateRange from './EditableDateRange';
-import { useDragAndDrop } from './useDragAndDrop';
+import Editable from '../common/Editable';
+import EditableDateRange from '../common/EditableDateRange';
+import { useDragAndDrop } from '../common/useDragAndDrop';
 
 export default function SecondPreview({
   data,

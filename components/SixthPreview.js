@@ -1,7 +1,7 @@
 import React from 'react';
-import Editable from './Editable';
-import EditableDateRange from './EditableDateRange';
-import { useDragAndDrop } from './useDragAndDrop';
+import Editable from '../common/Editable';
+import EditableDateRange from '../common/EditableDateRange';
+import { useDragAndDrop } from '../common/useDragAndDrop';
 
 // A compact, two-column layout designed to fit a lot of information.
 export default function SixthPreview({
