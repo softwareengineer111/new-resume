@@ -3,7 +3,6 @@ import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';
 
-// A more creative layout with an avatar placeholder and icons.
 export default function FifthPreview({
   data,
   onUpdate,

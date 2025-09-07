@@ -3,7 +3,6 @@ import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';
 
-// A clean, corporate layout with a right-hand sidebar.
 export default function NinthPreview({
   data,
   onUpdate,

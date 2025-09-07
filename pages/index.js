@@ -17,7 +17,6 @@ import EleventhPreview from '../components/EleventhPreview';
 import TwelfthPreview from '../components/TwelfthPreview';
 import ThirteenthPreview from '../components/ThirteenthPreview';
 
-// Define templates in a structured way to avoid repetition
 const TEMPLATES = [
   {
     id: 'first',
@@ -191,7 +190,6 @@ const initialData = {
   ],
 };
 
-// A helper for API calls with a timeout
 const apiCall = async (url, options = {}, timeout = 20000) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -210,14 +208,14 @@ const apiCall = async (url, options = {}, timeout = 20000) => {
 };
 
 export default function Home() {
-  const [data, setData] = useState(null); // Start with null until data is loaded
+  const [data, setData] = useState(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [templateId, setTemplateId] = useState('first');
   const [saveStatus, setSaveStatus] = useState('Saved');
   const [resumeId, setResumeId] = useState(null);
   const debounceTimeout = useRef(null);
   const isInitialLoad = useRef(true);
-  const lastSavedData = useRef(null); // To track the last successfully saved state
+  const lastSavedData = useRef(null);
 
   const startNewResume = () => {
     if (
@@ -225,19 +223,17 @@ export default function Home() {
         'Are you sure you want to clear everything and start a new resume?'
       )
     ) {
-      // Generate a new ID, save it, and reset the data state.
       const newId = uuidv4();
       localStorage.setItem('resumeId', newId);
       setResumeId(newId);
       setData(initialData);
-      lastSavedData.current = initialData; // Reset last saved state
+      lastSavedData.current = initialData;
       setSaveStatus('New resume created');
-      isInitialLoad.current = true; // Prevent autosave of initial data
+      isInitialLoad.current = true;
     }
   };
   function update(path, value) {
     setData((prev) => {
-      // Use structuredClone for a true deep copy, preventing mutation bugs.
       const newData = structuredClone(prev);
       const keys = path.split('.');
       let current = newData;
@@ -278,10 +274,8 @@ export default function Home() {
     });
   }
 
-  // Effect to fetch initial data from the database
   useEffect(() => {
     const loadInitialData = async () => {
-      // This promise ensures the loading indicator is shown for at least 1.5s
       const minDelayPromise = new Promise((resolve) =>
         setTimeout(resolve, 500)
       );
@@ -289,70 +283,59 @@ export default function Home() {
       const dataFetchPromise = (async () => {
         let id = localStorage.getItem('resumeId');
         if (!id) {
-          // First-time visit: generate a new ID and use initial data.
           id = uuidv4();
           localStorage.setItem('resumeId', id);
           setResumeId(id);
           setSaveStatus('New resume created');
-          isInitialLoad.current = true; // Prevent autosave on this initial setup
+          isInitialLoad.current = true;
           return initialData;
         }
 
-        // Returning user: fetch their data from the database.
         setResumeId(id);
         setSaveStatus('Loading...');
         try {
           const res = await apiCall(`/api/resume?id=${id}`);
-          isInitialLoad.current = true; // Prevent autosave on this initial load
+          isInitialLoad.current = true;
 
           if (res.ok) {
             const dbData = await res.json();
             setSaveStatus('Loaded');
             return dbData;
           }
-          // If not found in DB (e.g., cleared DB), treat as a new resume.
           setSaveStatus('Loaded');
           return initialData;
         } catch (error) {
-          isInitialLoad.current = true; // Prevent autosave on this failed load
+          isInitialLoad.current = true;
           if (error.name === 'AbortError') {
             setSaveStatus('Server is not responding. Working offline.');
           } else {
             setSaveStatus('Error loading data. Working offline.');
           }
           console.error('Failed to fetch resume:', error);
-          // On network error or timeout, use initial data as a fallback.
           return initialData;
         }
       })();
 
-      // Wait for both the data to be fetched and the minimum delay to pass.
       const [loadedData] = await Promise.all([
         dataFetchPromise,
         minDelayPromise,
       ]);
 
       setData(loadedData);
-      lastSavedData.current = loadedData; // Set initial saved state
+      lastSavedData.current = loadedData;
     };
 
     loadInitialData();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
-  // Effect for autosaving with debouncing
   useEffect(() => {
-    // Don't save if data or the resumeId is not ready
     if (!data || !resumeId) return;
 
-    // Prevent autosave on the initial data load
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
       return;
     }
 
-    // Small optimization: don't enter "Saving..." state if data hasn't changed.
-    // Using JSON.stringify for deep comparison is pragmatic for this data structure.
-    // For very large or complex objects, a library like `fast-deep-equal` might be more performant.
     if (JSON.stringify(data) === JSON.stringify(lastSavedData.current)) {
       return;
     }
@@ -370,7 +353,7 @@ export default function Home() {
         });
         if (res.ok) {
           setSaveStatus('Saved');
-          lastSavedData.current = data; // Update last saved state on success
+          lastSavedData.current = data;
         } else {
           setSaveStatus('Error saving');
         }
@@ -380,21 +363,17 @@ export default function Home() {
         );
         console.error('Failed to save resume:', error);
       }
-    }, 1500); // Save 1.5 seconds after the last edit
+    }, 1500);
 
     return () => clearTimeout(debounceTimeout.current);
-  }, [data, resumeId]); // This effect runs whenever 'data' or 'resumeId' changes
+  }, [data, resumeId]);
 
-  // Effect for saving any final changes when the user leaves the page
   useEffect(() => {
     const handleBeforeUnload = () => {
-      // Use a deep comparison to see if there are unsaved changes.
       if (
         data &&
         JSON.stringify(data) !== JSON.stringify(lastSavedData.current)
       ) {
-        // Use sendBeacon for a reliable, non-blocking request on unload.
-        // Note: This is a "fire and forget" request. We don't get a response.
         const payload = new Blob(
           [JSON.stringify({ resumeId, resumeData: data })],
           { type: 'application/json' }
@@ -417,17 +396,15 @@ export default function Home() {
 
     setPdfLoading(true);
 
-    // Temporarily remove box-shadow for a cleaner PDF capture
     const originalShadow = resumeElement.style.boxShadow;
     resumeElement.style.boxShadow = 'none';
 
     html2canvas(resumeElement, {
-      scale: 2, // Use a higher scale for better image quality
-      useCORS: true, // Necessary for external images like avatars
+      scale: 2,
+      useCORS: true,
       logging: false,
     })
       .then((canvas) => {
-        // Restore the box-shadow after capture
         resumeElement.style.boxShadow = originalShadow;
 
         const imgData = canvas.toDataURL('image/png');
@@ -444,7 +421,6 @@ export default function Home() {
         const ratio = canvasWidth / pdfWidth;
         const imgHeight = canvasHeight / ratio;
 
-        // Add the image to the PDF, handling multiple pages if necessary
         let heightLeft = imgHeight;
         let position = 0;
         pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
@@ -462,16 +438,14 @@ export default function Home() {
       })
       .catch((err) => {
         console.error('Error generating PDF:', err);
-        resumeElement.style.boxShadow = originalShadow; // Restore shadow on error
+        resumeElement.style.boxShadow = originalShadow;
         setPdfLoading(false);
       });
   };
 
-  // Find the current template's component based on the selected ID
   const CurrentPreviewComponent =
     TEMPLATES.find((t) => t.id === templateId)?.component || Preview;
 
-  // Props that are common to all preview components
   const commonPreviewProps = {
     data,
     onUpdate: update,

@@ -3,7 +3,6 @@ import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';
 
-// A formal, academic-style CV layout.
 export default function SeventhPreview({
   data,
   onUpdate,

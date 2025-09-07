@@ -3,7 +3,6 @@ import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';
 
-// A compact, two-column layout designed to fit a lot of information.
 export default function SixthPreview({
   data,
   onUpdate,
@@ -215,8 +214,6 @@ export default function SixthPreview({
                 tag='p'
                 path='skills'
                 onUpdate={(path, value) => {
-                  // When the user edits the skills, the value is a single string.
-                  // We need to convert it back to an array before updating the state.
                   const skillsArray = value
                     .split(',')
                     .map((s) => s.trim())

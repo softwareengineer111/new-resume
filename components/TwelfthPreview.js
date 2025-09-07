@@ -3,7 +3,7 @@ import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';
 
 const TwelfthPreview = ({ data, onUpdate, onAdd, onRemove, onReorder }) => {
-  const accentColor = '#4a90e2'; // A nice blue
+  const accentColor = '#4a90e2';
   const backgroundColor = '#f4f7f6';
   const textColor = '#333';
 

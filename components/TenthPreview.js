@@ -3,7 +3,6 @@ import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';
 
-// An ultra-minimalist, text-only layout focusing on typography.
 export default function TenthPreview({
   data,
   onUpdate,

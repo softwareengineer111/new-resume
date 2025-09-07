@@ -3,7 +3,6 @@ import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';
 
-// A tech-focused, dark-theme style resume.
 export default function EighthPreview({
   data,
   onUpdate,
