@@ -212,7 +212,7 @@ const apiCall = async (url, options = {}, timeout = 20000) => {
 export default function Home() {
   const [data, setData] = useState(null); // Start with null until data is loaded
   const [pdfLoading, setPdfLoading] = useState(false);
-  const [templateId, setTemplateId] = useState('thirteenth');
+  const [templateId, setTemplateId] = useState('first');
   const [saveStatus, setSaveStatus] = useState('Saved');
   const [resumeId, setResumeId] = useState(null);
   const debounceTimeout = useRef(null);
