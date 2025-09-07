@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import Editable from './Editable';
 import EditableDateRange from './EditableDateRange';
+import { useDragAndDrop } from './useDragAndDrop';
 
 export default function Preview({
   data,
@@ -9,36 +10,13 @@ export default function Preview({
   onRemove,
   onReorder,
 }) {
-  const dragItem = useRef(null);
-  const [draggedOverSection, setDraggedOverSection] = useState('');
-  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
-
-  const handleDragStart = (e, section, index) => {
-    dragItem.current = { section, index };
-    setTimeout(() => {
-      e.target.closest('.entry, li').classList.add('dragging');
-    }, 0);
-  };
-
-  const handleDragEnter = (section, index) => {
-    if (dragItem.current && dragItem.current.section === section) {
-      setDraggedOverSection(section);
-      setDraggedOverIndex(index);
-    }
-  };
-
-  const handleDragEnd = (e) => {
-    if (
-      draggedOverIndex !== null &&
-      dragItem.current.index !== draggedOverIndex
-    ) {
-      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
-    }
-    document.querySelector('.dragging')?.classList.remove('dragging');
-    dragItem.current = null;
-    setDraggedOverSection('');
-    setDraggedOverIndex(null);
-  };
+  const {
+    draggedOverSection,
+    draggedOverIndex,
+    handleDragStart,
+    handleDragEnter,
+    handleDragEnd,
+  } = useDragAndDrop(onReorder);
 
   return (
     <div className='panel preview'>
@@ -118,7 +96,7 @@ export default function Preview({
           {data.experience.map((exp, i) => (
             <div
               key={i}
-              className={`entry ${
+              className={`entry draggable-item ${
                 draggedOverSection === 'experience' && draggedOverIndex === i
                   ? 'drag-over'
                   : ''
@@ -281,6 +259,7 @@ export default function Preview({
             {data.skills.map((skill, i) => (
               <li
                 key={i}
+                className='draggable-item'
                 className={`${
                   draggedOverSection === 'skills' && draggedOverIndex === i
                     ? 'drag-over'
