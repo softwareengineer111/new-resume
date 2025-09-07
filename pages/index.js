@@ -16,6 +16,107 @@ import TenthPreview from '../components/TenthPreview';
 import EleventhPreview from '../components/EleventhPreview';
 import TwelfthPreview from '../components/TwelfthPreview';
 
+// Define templates in a structured way to avoid repetition
+const TEMPLATES = [
+  {
+    id: 'first',
+    name: 'Classic',
+    component: Preview,
+    thumbnail: (
+      <div className='t1-preview'>
+        <div className='t1-header'></div>
+        <div className='t1-line'></div>
+        <div className='t1-line short'></div>
+      </div>
+    ),
+  },
+  {
+    id: 'second',
+    name: 'Modern',
+    component: SecondPreview,
+    thumbnail: (
+      <div className='t2-preview'>
+        <div className='t2-sidebar'></div>
+        <div className='t2-main'></div>
+      </div>
+    ),
+  },
+  {
+    id: 'third',
+    name: 'Elegant',
+    component: ThirdPreview,
+    thumbnail: (
+      <div className='t3-preview'>
+        <div className='t3-header'></div>
+        <div className='t3-line'></div>
+        <div className='t3-line short'></div>
+      </div>
+    ),
+  },
+  {
+    id: 'fourth',
+    name: 'Professional',
+    component: FourthPreview,
+    thumbnail: (
+      <div className='t4-preview'>
+        <div className='t4-header'>
+          <div className='t4-header-main'></div>
+          <div className='t4-header-side'></div>
+        </div>
+        <div className='t4-body'></div>
+      </div>
+    ),
+  },
+  {
+    id: 'fifth',
+    name: 'Creative',
+    component: FifthPreview,
+    thumbnail: <div className='t5-preview'></div>,
+  },
+  {
+    id: 'sixth',
+    name: 'Compact',
+    component: SixthPreview,
+    thumbnail: <div className='t6-preview'></div>,
+  },
+  {
+    id: 'seventh',
+    name: 'Academic',
+    component: SeventhPreview,
+    thumbnail: <div className='t7-preview'></div>,
+  },
+  {
+    id: 'eighth',
+    name: 'Tech',
+    component: EighthPreview,
+    thumbnail: <div className='t8-preview'></div>,
+  },
+  {
+    id: 'ninth',
+    name: 'Corporate',
+    component: NinthPreview,
+    thumbnail: <div className='t9-preview'></div>,
+  },
+  {
+    id: 'tenth',
+    name: 'Minimal',
+    component: TenthPreview,
+    thumbnail: <div className='t10-preview'></div>,
+  },
+  {
+    id: 'eleventh',
+    name: 'Chronological',
+    component: EleventhPreview,
+    thumbnail: <div className='t11-preview'></div>,
+  },
+  {
+    id: 'twelfth',
+    name: 'Artistic',
+    component: TwelfthPreview,
+    thumbnail: <div className='t12-preview'></div>,
+  },
+];
+
 const initialData = {
   name: 'Firstname Lastname',
   design: {
@@ -75,7 +176,7 @@ export default function Home() {
   const [data, setData] = useState(null); // Start with null until data is loaded
   const [loading, setLoading] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
-  const [template, setTemplate] = useState('first');
+  const [templateId, setTemplateId] = useState('first');
   const [saveStatus, setSaveStatus] = useState('Saved');
   const [resumeId, setResumeId] = useState(null);
   const debounceTimeout = useRef(null);
@@ -243,137 +344,37 @@ export default function Home() {
       });
   };
 
+  // Find the current template's component based on the selected ID
+  const CurrentPreviewComponent =
+    TEMPLATES.find((t) => t.id === templateId)?.component || Preview;
+
+  // Props that are common to all preview components
+  const commonPreviewProps = {
+    data,
+    onUpdate: update,
+    onAdd: addSection,
+    onRemove: removeEntry,
+    onReorder: reorderList,
+  };
+
   return (
     <div className='app'>
       <div className='editor'>
         <div className='panel'>
           <h3>Загвар сонгох</h3>
           <div className='template-selector'>
-            <div
-              className={`template-thumbnail ${
-                template === 'first' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('first')}
-            >
-              <div className='t1-preview'>
-                <div className='t1-header'></div>
-                <div className='t1-line'></div>
-                <div className='t1-line short'></div>
+            {TEMPLATES.map((t) => (
+              <div
+                key={t.id}
+                className={`template-thumbnail ${
+                  templateId === t.id ? 'active' : ''
+                }`}
+                onClick={() => setTemplateId(t.id)}
+              >
+                {t.thumbnail}
+                <p>{t.name}</p>
               </div>
-              <p>Classic</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'second' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('second')}
-            >
-              <div className='t2-preview'>
-                <div className='t2-sidebar'></div>
-                <div className='t2-main'></div>
-              </div>
-              <p>Modern</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'third' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('third')}
-            >
-              <div className='t3-preview'>
-                <div className='t3-header'></div>
-                <div className='t3-line'></div>
-                <div className='t3-line short'></div>
-              </div>
-              <p>Elegant</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'fourth' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('fourth')}
-            >
-              <div className='t4-preview'>
-                <div className='t4-header'>
-                  <div className='t4-header-main'></div>
-                  <div className='t4-header-side'></div>
-                </div>
-                <div className='t4-body'></div>
-              </div>
-              <p>Professional</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'fifth' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('fifth')}
-            >
-              <div className='t5-preview'></div>
-              <p>Creative</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'sixth' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('sixth')}
-            >
-              <div className='t6-preview'></div>
-              <p>Compact</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'seventh' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('seventh')}
-            >
-              <div className='t7-preview'></div>
-              <p>Academic</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'eighth' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('eighth')}
-            >
-              <div className='t8-preview'></div>
-              <p>Tech</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'ninth' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('ninth')}
-            >
-              <div className='t9-preview'></div>
-              <p>Corporate</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'tenth' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('tenth')}
-            >
-              <div className='t10-preview'></div>
-              <p>Minimal</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'eleventh' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('eleventh')}
-            >
-              <div className='t11-preview'></div>
-              <p>Chronological</p>
-            </div>
-            <div
-              className={`template-thumbnail ${
-                template === 'twelfth' ? 'active' : ''
-              }`}
-              onClick={() => setTemplate('twelfth')}
-            >
-              <div className='t12-preview'></div>
-              <p>Artistic</p>
-            </div>
+            ))}
           </div>
           <button
             className='btn'
@@ -390,116 +391,7 @@ export default function Home() {
       {!data ? (
         <div>Loading...</div>
       ) : (
-        <>
-          {template === 'first' && (
-            <Preview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'second' && (
-            <SecondPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'third' && (
-            <ThirdPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'fourth' && (
-            <FourthPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'fifth' && (
-            <FifthPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'sixth' && (
-            <SixthPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'seventh' && (
-            <SeventhPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'eighth' && (
-            <EighthPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'ninth' && (
-            <NinthPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'tenth' && (
-            <TenthPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'eleventh' && (
-            <EleventhPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-          {template === 'twelfth' && (
-            <TwelfthPreview
-              data={data}
-              onUpdate={update}
-              onAdd={addSection}
-              onRemove={removeEntry}
-              onReorder={reorderList}
-            />
-          )}
-        </>
+        <CurrentPreviewComponent {...commonPreviewProps} />
       )}
     </div>
   );
