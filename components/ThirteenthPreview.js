@@ -31,7 +31,7 @@ export default function ThirteenthPreview({
           </div>
 
           {/* Contact */}
-          <div>
+          <div className='contact-section-background'>
             <h2 className='section-title'>Contact</h2>
             <div className='contact-info'>
               <p>
@@ -56,7 +56,7 @@ export default function ThirteenthPreview({
           </div>
 
           {/* Education */}
-          <div>
+          <div className='education-section-background'>
             <div className='section-header'>
               <h2 className='section-title'>Education</h2>
               <button
@@ -161,7 +161,7 @@ export default function ThirteenthPreview({
           </header>
 
           {/* Experience */}
-          <div>
+          <div className='experience-section-background'>
             <div className='section-header'>
               <h2 className='section-title'>Experience</h2>
               <button
@@ -257,7 +257,7 @@ export default function ThirteenthPreview({
           </div>
 
           {/* Skills */}
-          <div>
+          <div className='skills-section-background'>
             <div className='section-header'>
               <h2 className='section-title'>Skills</h2>
               <button
@@ -341,12 +341,52 @@ export default function ThirteenthPreview({
           object-fit: cover;
         }
         .section-title {
-          font-size: 1.125rem;
-          font-weight: 700;
-          color: #1f2937;
+          color: #937f31;
           border-bottom: 2px solid #facc15;
           padding-bottom: 0.25rem;
           margin-bottom: 0.5rem;
+          font-family: Urbanist;
+          font-weight: 700;
+          font-style: Bold;
+          font-size: 14px;
+          letter-spacing: 2px;
+          vertical-align: middle;
+          text-transform: uppercase;
+        }
+        .contact-section-background {
+          background-color: #f7f3d7;
+          top: 274px;
+          left: 24px;
+          padding-top: 16px;
+          padding-right: 10px;
+          padding-bottom: 16px;
+          padding-left: 10px;
+          gap: 20px;
+        }
+        .experience-section-background {
+          background-color: #f7f6f0;
+          padding-top: 16px;
+          padding-right: 10px;
+          padding-bottom: 16px;
+          padding-left: 10px;
+          gap: 20px;
+        }
+        .education-section-background {
+          background-color: #f7f1eb;
+          left: 24px;
+          padding-top: 16px;
+          padding-right: 10px;
+          padding-bottom: 16px;
+          padding-left: 10px;
+          gap: 20px;
+        }
+        .skills-section-background {
+          background-color: #f2f5f7;
+          padding-top: 16px;
+          padding-right: 10px;
+          padding-bottom: 16px;
+          padding-left: 10px;
+          gap: 20px;
         }
         .contact-info p {
           font-size: 0.875rem;
