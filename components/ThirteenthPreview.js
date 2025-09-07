@@ -337,8 +337,8 @@ export default function ThirteenthPreview({
           align-items: flex-start;
         }
         .top-left {
-          width: 250px;
-          max-width: 250px;
+          width: 290px;
+          max-width: 290px;
           flex-shrink: 0;
         }
         .top-right {
