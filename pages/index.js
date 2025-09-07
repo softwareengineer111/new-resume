@@ -172,14 +172,32 @@ const initialData = {
   ],
 };
 
+// A helper for API calls with a timeout
+const apiCall = async (url, options = {}, timeout = 20000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+};
+
 export default function Home() {
   const [data, setData] = useState(null); // Start with null until data is loaded
-  const [loading, setLoading] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [templateId, setTemplateId] = useState('first');
   const [saveStatus, setSaveStatus] = useState('Saved');
   const [resumeId, setResumeId] = useState(null);
   const debounceTimeout = useRef(null);
+  const isInitialLoad = useRef(true);
 
   function update(path, value) {
     setData((prev) => {
@@ -228,6 +246,35 @@ export default function Home() {
   useEffect(() => {
     let id = localStorage.getItem('resumeId');
 
+    const loadResume = async (resumeIdToLoad) => {
+      setResumeId(resumeIdToLoad);
+      setSaveStatus('Loading...');
+      try {
+        const res = await apiCall(`/api/resume?id=${resumeIdToLoad}`);
+        isInitialLoad.current = true; // Prevent autosave on this initial load
+
+        if (res.ok) {
+          const dbData = await res.json();
+          setData(dbData);
+          setSaveStatus('Loaded');
+        } else {
+          // If not found in DB (e.g., cleared DB), treat as a new resume.
+          setData(initialData);
+          setSaveStatus('Loaded'); // Still "Loaded", just with initial data
+        }
+      } catch (error) {
+        isInitialLoad.current = true; // Prevent autosave on this failed load
+        if (error.name === 'AbortError') {
+          setSaveStatus('Server is not responding. Working offline.');
+        } else {
+          setSaveStatus('Error loading data. Working offline.');
+        }
+        console.error('Failed to fetch resume:', error);
+        // On network error or timeout, use initial data as a fallback.
+        setData(initialData);
+      }
+    };
+
     if (!id) {
       // First-time visit for this browser: generate a new ID and use initial data.
       id = uuidv4();
@@ -235,51 +282,42 @@ export default function Home() {
       setResumeId(id);
       setData(initialData);
       setSaveStatus('New resume created');
+      isInitialLoad.current = true; // Prevent autosave
     } else {
       // Returning user: fetch their data from the database.
-      setResumeId(id);
-      setSaveStatus('Loading...');
-      fetch(`/api/resume?id=${id}`)
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-          // If not found in DB (e.g., cleared DB), treat as a new resume.
-          return initialData;
-        })
-        .then((dbData) => {
-          setData(dbData);
-          setSaveStatus('Loaded');
-        })
-        .catch(() => {
-          // On network error, use initial data as a fallback.
-          setData(initialData);
-          setSaveStatus('Error loading data');
-        });
+      loadResume(id);
     }
   }, []); // Empty dependency array means this runs once on mount
 
   // Effect for autosaving with debouncing
   useEffect(() => {
     // Don't save if data or the resumeId is not ready
-    if (!data || !resumeId) {
+    if (!data || !resumeId) return;
+
+    // Prevent autosave on the initial data load
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
       return;
     }
 
     setSaveStatus('Saving...');
 
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
-    debounceTimeout.current = setTimeout(() => {
-      fetch('/api/resume', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resumeId, resumeData: data }),
-      })
-        .then((res) => setSaveStatus(res.ok ? 'Saved' : 'Error'))
-        .catch(() => setSaveStatus('Error'));
+    debounceTimeout.current = setTimeout(async () => {
+      try {
+        const res = await apiCall('/api/resume', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resumeId, resumeData: data }),
+        });
+        setSaveStatus(res.ok ? 'Saved' : 'Error saving');
+      } catch (error) {
+        setSaveStatus(
+          error.name === 'AbortError' ? 'Error: Save timed out' : 'Error saving'
+        );
+        console.error('Failed to save resume:', error);
+      }
     }, 1500); // Save 1.5 seconds after the last edit
 
     return () => clearTimeout(debounceTimeout.current);
