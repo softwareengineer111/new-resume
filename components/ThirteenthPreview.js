@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
 import { useDragAndDrop } from '../common/useDragAndDrop';

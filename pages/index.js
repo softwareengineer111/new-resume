@@ -122,8 +122,15 @@ const TEMPLATES = [
     component: ThirteenthPreview,
     thumbnail: (
       <div className='t13-preview'>
-        <div className='t13-left'></div>
-        <div className='t13-right'></div>
+        <div className='t13-left'>
+          <div className='t13-avatar'></div>
+          <div className='t13-line'></div>
+          <div className='t13-line short'></div>
+        </div>
+        <div className='t13-right'>
+          <div className='t13-header'></div>
+          <div className='t13-line'></div>
+        </div>
       </div>
     ),
   },

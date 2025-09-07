@@ -485,6 +485,46 @@ body {
   margin: 15px 8px;
 }
 
+/* Thumbnail for Template 13 (Structured) */
+.t13-preview {
+  height: 80px;
+  background: #f9fafb;
+  border-radius: 4px;
+  padding: 6px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  gap: 6px;
+}
+.t13-left {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+.t13-right {
+  width: 67%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+.t13-avatar {
+  width: 28px;
+  height: 28px;
+  background-color: #d1d5db;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.t13-header {
+  height: 10px;
+  width: 60%;
+  background: #d1d5db;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
 .entry.drag-over {
   /* Specific for entry items */
   border-left: 3px solid var(--accent) !important;
