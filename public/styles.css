@@ -28,30 +28,46 @@ body {
 /* 2. Layout */
 .app {
   display: flex;
-  gap: 24px;
-  padding: 24px;
-  max-width: 1600px; /* Set a maximum width for the entire app */
-  margin: 0 auto; /* Center the app on the page */
+  flex-direction: column; /* Mobile-first: default to stacked */
+  gap: 16px;
+  padding: 12px; /* Reduced padding for mobile */
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
 .editor {
-  width: 420px;
+  width: 100%; /* Full width on mobile */
   flex-shrink: 0;
-  /* Ensure the editor panel stays in place */
   z-index: 1;
 }
 
 .preview {
   flex: 1;
-  min-width: 360px;
+  min-width: 0; /* Allow preview to shrink on small screens */
 }
 
-@media (max-width: 900px) {
+/* Tablet and larger */
+@media (min-width: 768px) {
   .app {
-    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+  }
+}
+
+/* Desktop and larger */
+@media (min-width: 992px) {
+  .app {
+    flex-direction: row; /* Side-by-side layout */
   }
   .editor {
-    width: 100%;
+    width: 380px; /* A balanced width for medium desktops */
+  }
+}
+
+/* Large desktops */
+@media (min-width: 1200px) {
+  .editor {
+    width: 420px; /* More space for the editor on large screens */
   }
 }
 
@@ -186,6 +202,18 @@ body {
   box-shadow: var(--shadow);
 }
 
+@media (max-width: 576px) {
+  .preview-inner {
+    padding: 16px;
+  }
+  .preview-inner .h1 {
+    font-size: 2rem; /* Slightly smaller on mobile */
+  }
+  .preview-inner .h2 {
+    font-size: 1.1rem;
+  }
+}
+
 .preview-inner .h1 {
   font-size: 2.5rem;
   margin-bottom: 0;
@@ -268,7 +296,8 @@ body {
   padding: 8px;
   transition: all 0.2s ease-in-out;
   text-align: center;
-  width: 120px;
+  flex: 1 1 100px; /* Allow thumbnails to grow and shrink */
+  max-width: 120px; /* But not get too wide */
 }
 
 .template-thumbnail:hover {
