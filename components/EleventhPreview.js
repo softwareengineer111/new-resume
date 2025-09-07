@@ -1,10 +1,19 @@
 import Editable from '../common/Editable';
 import EditableDateRange from '../common/EditableDateRange';
+import { useDragAndDrop } from '../common/useDragAndDrop';
 
-const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
+const EleventhPreview = ({ data, onUpdate, onAdd, onRemove, onReorder }) => {
+  const {
+    draggedOverSection,
+    draggedOverIndex,
+    handleDragStart,
+    handleDragEnter,
+    handleDragEnd,
+  } = useDragAndDrop(onReorder);
+
   return (
     <div className='preview preview-11'>
-      <div className='preview-inner'>
+      <div className='preview-inner' onDragOver={(e) => e.preventDefault()}>
         <header className='header'>
           <Editable tag='h1' path='name' onUpdate={onUpdate} className='name'>
             {data.name}
@@ -40,9 +49,33 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
         </div>
 
         <div className='section'>
-          <h3 className='section-title'>Experience</h3>
+          <div className='section-header'>
+            <h3 className='section-title'>Experience</h3>
+            <button
+              className='btn-add'
+              onClick={() =>
+                onAdd('experience', {
+                  role: 'Role',
+                  company: 'Company',
+                  description: 'Description',
+                })
+              }
+            >
+              +
+            </button>
+          </div>
           {data.experience.map((exp, index) => (
-            <div key={index} className='entry'>
+            <div
+              key={index}
+              className={`entry draggable-item ${
+                draggedOverSection === 'experience' &&
+                draggedOverIndex === index
+                  ? 'drag-over'
+                  : ''
+              }`.trim()}
+              onDragEnter={() => handleDragEnter('experience', index)}
+              onDragEnd={handleDragEnd}
+            >
               <div className='entry-header'>
                 <Editable
                   tag='strong'
@@ -52,6 +85,13 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
                 >
                   {exp.role}
                 </Editable>
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'experience', index)}
+                >
+                  ::
+                </div>
                 <EditableDateRange
                   className='date'
                   startDate={exp.startDate}
@@ -87,14 +127,42 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
               >
                 {exp.description}
               </Editable>
+              <button
+                className='btn-remove'
+                onClick={() => onRemove('experience', index)}
+              >
+                &times;
+              </button>
             </div>
           ))}
         </div>
 
         <div className='section'>
-          <h3 className='section-title'>Education</h3>
+          <div className='section-header'>
+            <h3 className='section-title'>Education</h3>
+            <button
+              className='btn-add'
+              onClick={() =>
+                onAdd('education', {
+                  degree: 'Degree',
+                  university: 'University',
+                })
+              }
+            >
+              +
+            </button>
+          </div>
           {data.education.map((edu, index) => (
-            <div key={index} className='entry'>
+            <div
+              key={index}
+              className={`entry draggable-item ${
+                draggedOverSection === 'education' && draggedOverIndex === index
+                  ? 'drag-over'
+                  : ''
+              }`.trim()}
+              onDragEnter={() => handleDragEnter('education', index)}
+              onDragEnd={handleDragEnd}
+            >
               <div className='entry-header'>
                 <Editable
                   tag='strong'
@@ -104,6 +172,13 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
                 >
                   {edu.degree}
                 </Editable>
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'education', index)}
+                >
+                  ::
+                </div>
                 <EditableDateRange
                   className='date'
                   startDate={edu.startDate}
@@ -131,15 +206,45 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
               >
                 {edu.university}
               </Editable>
+              <button
+                className='btn-remove'
+                onClick={() => onRemove('education', index)}
+              >
+                &times;
+              </button>
             </div>
           ))}
         </div>
 
         <div className='section'>
-          <h3 className='section-title'>Skills</h3>
+          <div className='section-header'>
+            <h3 className='section-title'>Skills</h3>
+            <button
+              className='btn-add'
+              onClick={() => onAdd('skills', 'New Skill')}
+            >
+              +
+            </button>
+          </div>
           <ul className='skills-list'>
             {data.skills.map((skill, index) => (
-              <li key={index}>
+              <li
+                key={index}
+                className={`draggable-item ${
+                  draggedOverSection === 'skills' && draggedOverIndex === index
+                    ? 'drag-over'
+                    : ''
+                }`.trim()}
+                onDragEnter={() => handleDragEnter('skills', index)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'skills', index)}
+                >
+                  ::
+                </div>
                 <Editable
                   tag='span'
                   path={`skills.${index}`}
@@ -147,6 +252,12 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
                 >
                   {skill}
                 </Editable>
+                <button
+                  className='btn-remove'
+                  onClick={() => onRemove('skills', index)}
+                >
+                  &times;
+                </button>
               </li>
             ))}
           </ul>
@@ -192,7 +303,13 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
           padding: 0;
         }
         .section {
+          position: relative;
           margin-bottom: 20px;
+        }
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
         .section-title {
           color: #2980b9;
@@ -207,7 +324,9 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
           color: #34495e;
         }
         .entry {
+          position: relative;
           margin-bottom: 15px;
+          padding-left: 1.5rem;
         }
         .entry-header {
           display: flex;
@@ -230,7 +349,71 @@ const EleventhPreview = ({ data, onUpdate, onAdd, onRemove }) => {
         }
         .skills-list {
           list-style: disc;
-          padding-left: 20px;
+          padding-left: 1.5rem;
+        }
+        .skills-list li {
+          position: relative;
+          margin-bottom: 0.5rem;
+          padding-left: 1.5rem;
+        }
+        .btn-add,
+        .btn-remove {
+          background: transparent;
+          border: 1px solid #ccc;
+          color: #888;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          font-size: 1rem;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .section:hover .btn-add {
+          opacity: 1;
+          pointer-events: all;
+        }
+        .entry:hover .btn-remove,
+        .skills-list li:hover .btn-remove {
+          opacity: 1;
+          pointer-events: all;
+        }
+        .btn-add:hover,
+        .btn-remove:hover {
+          background: #333;
+          color: #fff;
+          border-color: #333;
+        }
+        .btn-remove {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+        .skills-list .btn-remove {
+          right: -2rem;
+        }
+        .drag-handle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1.5rem;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: #ccc;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .entry:hover .drag-handle,
+        .skills-list li:hover .drag-handle {
+          opacity: 1;
         }
       `}</style>
     </div>
