@@ -21,287 +21,299 @@ export default function ThirteenthPreview({
   return (
     <div className='panel preview'>
       <div className='preview-inner-13' onDragOver={(e) => e.preventDefault()}>
-        {/* Left Column */}
-        <div className='left-column'>
-          {/* Profile Image */}
-          <div className='avatar-wrapper'>
-            {data.avatarUrl && (
-              <img src={data.avatarUrl} alt={data.name} className='avatar' />
-            )}
-          </div>
-
-          {/* Contact */}
-          <div className='contact-section-background'>
-            <h2 className='section-title'>Contact</h2>
-            <div className='contact-info'>
-              <p>
-                📞{' '}
-                <Editable tag='span' path='contact.phone' onUpdate={onUpdate}>
-                  {data.contact.phone}
-                </Editable>
-              </p>
-              <p>
-                📧{' '}
-                <Editable tag='span' path='contact.email' onUpdate={onUpdate}>
-                  {data.contact.email}
-                </Editable>
-              </p>
-              <p>
-                🌐{' '}
-                <Editable tag='span' path='contact.website' onUpdate={onUpdate}>
-                  {data.contact.website}
-                </Editable>
-              </p>
+        <div className='top-row'>
+          <div className='top-left'>
+            <div className='avatar-wrapper'>
+              {data.avatarUrl && (
+                <img src={data.avatarUrl} alt={data.name} className='avatar' />
+              )}
             </div>
           </div>
-
-          {/* Education */}
-          <div className='education-section-background'>
-            <div className='section-header'>
-              <h2 className='section-title'>Education</h2>
-              <button
-                className='btn-add'
-                onClick={() =>
-                  onAdd('education', {
-                    degree: 'Bachelor of Arts',
-                    university: 'University Name',
-                    startDate: '2015-09',
-                    endDate: '2018-06',
-                  })
-                }
+          <div className='top-right'>
+            <header>
+              <Editable
+                tag='h1'
+                className='name'
+                path='name'
+                onUpdate={onUpdate}
               >
-                +
-              </button>
-            </div>
-            <div className='education-list'>
-              {data.education.map((edu, i) => (
-                <div
-                  key={i}
-                  className={`entry draggable-item ${
-                    draggedOverSection === 'education' && draggedOverIndex === i
-                      ? 'drag-over'
-                      : ''
-                  }`}
-                  onDragEnter={() => handleDragEnter('education', i)}
-                  onDragEnd={handleDragEnd}
-                >
-                  <div
-                    className='drag-handle'
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'education', i)}
-                  >
-                    ::
-                  </div>
-                  <div className='education-item'>
-                    <EditableDateRange
-                      className='date-range'
-                      startDate={edu.startDate}
-                      endDate={edu.endDate}
-                      onUpdate={(newDates) => {
-                        onUpdate(
-                          `education.${i}.startDate`,
-                          newDates.startDate
-                        );
-                        onUpdate(`education.${i}.endDate`, newDates.endDate);
-                      }}
-                    />
-                    <Editable
-                      tag='p'
-                      className='degree'
-                      path={`education.${i}.degree`}
-                      onUpdate={onUpdate}
-                    >
-                      {edu.degree}
-                    </Editable>
-                    <Editable
-                      tag='p'
-                      className='university'
-                      path={`education.${i}.university`}
-                      onUpdate={onUpdate}
-                    >
-                      {edu.university}
-                    </Editable>
-                  </div>
-                  <button
-                    className='btn-remove'
-                    onClick={() => onRemove('education', i)}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
+                {data.name}
+              </Editable>
+              <Editable
+                tag='h2'
+                className='title'
+                path='title'
+                onUpdate={onUpdate}
+              >
+                {data.title}
+              </Editable>
+              <Editable
+                tag='p'
+                className='summary'
+                path='summary'
+                onUpdate={onUpdate}
+                multiline
+              >
+                {data.summary}
+              </Editable>
+            </header>
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className='right-column'>
-          {/* Header */}
-          <header>
-            <Editable tag='h1' className='name' path='name' onUpdate={onUpdate}>
-              {data.name}
-            </Editable>
-            <Editable
-              tag='h2'
-              className='title'
-              path='title'
-              onUpdate={onUpdate}
-            >
-              {data.title}
-            </Editable>
-            <Editable
-              tag='p'
-              className='summary'
-              path='summary'
-              onUpdate={onUpdate}
-              multiline
-            >
-              {data.summary}
-            </Editable>
-          </header>
-
-          {/* Experience */}
-          <div className='experience-section-background'>
-            <div className='section-header'>
-              <h2 className='section-title'>Experience</h2>
-              <button
-                className='btn-add'
-                onClick={() =>
-                  onAdd('experience', {
-                    role: 'Senior Product Designer',
-                    company: 'Company Name',
-                    startDate: '2021-01',
-                    endDate: '',
-                    isCurrent: true,
-                    description: 'Description of work.',
-                  })
-                }
-              >
-                +
-              </button>
-            </div>
-            <div className='experience-list'>
-              {data.experience.map((exp, i) => (
-                <div
-                  key={i}
-                  className={`entry draggable-item ${
-                    draggedOverSection === 'experience' &&
-                    draggedOverIndex === i
-                      ? 'drag-over'
-                      : ''
-                  }`}
-                  onDragEnter={() => handleDragEnter('experience', i)}
-                  onDragEnd={handleDragEnd}
+        <div className='bottom-row'>
+          <div className='bottom-left'>
+            {/* Education */}
+            <div className='education-section-background'>
+              <div className='section-header'>
+                <h2 className='section-title'>Education</h2>
+                <button
+                  className='btn-add'
+                  onClick={() =>
+                    onAdd('education', {
+                      degree: 'Bachelor of Arts',
+                      university: 'University Name',
+                      startDate: '2015-09',
+                      endDate: '2018-06',
+                    })
+                  }
                 >
+                  +
+                </button>
+              </div>
+              <div className='education-list'>
+                {data.education.map((edu, i) => (
                   <div
-                    className='drag-handle'
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                    key={i}
+                    className={`entry draggable-item ${
+                      draggedOverSection === 'education' &&
+                      draggedOverIndex === i
+                        ? 'drag-over'
+                        : ''
+                    }`}
+                    onDragEnter={() => handleDragEnter('education', i)}
+                    onDragEnd={handleDragEnd}
                   >
-                    ::
+                    <div
+                      className='drag-handle'
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, 'education', i)}
+                    >
+                      ::
+                    </div>
+                    <div className='education-item'>
+                      <EditableDateRange
+                        className='date-range'
+                        startDate={edu.startDate}
+                        endDate={edu.endDate}
+                        onUpdate={(newDates) => {
+                          onUpdate(
+                            `education.${i}.startDate`,
+                            newDates.startDate
+                          );
+                          onUpdate(`education.${i}.endDate`, newDates.endDate);
+                        }}
+                      />
+                      <Editable
+                        tag='p'
+                        className='degree'
+                        path={`education.${i}.degree`}
+                        onUpdate={onUpdate}
+                      >
+                        {edu.degree}
+                      </Editable>
+                      <Editable
+                        tag='p'
+                        className='university'
+                        path={`education.${i}.university`}
+                        onUpdate={onUpdate}
+                      >
+                        {edu.university}
+                      </Editable>
+                    </div>
+                    <button
+                      className='btn-remove'
+                      onClick={() => onRemove('education', i)}
+                    >
+                      &times;
+                    </button>
                   </div>
-                  <div className='experience-item'>
-                    <EditableDateRange
-                      className='date-range'
-                      startDate={exp.startDate}
-                      endDate={exp.endDate}
-                      isCurrent={exp.isCurrent}
-                      onUpdate={(newDates) => {
-                        onUpdate(
-                          `experience.${i}.startDate`,
-                          newDates.startDate
-                        );
-                        onUpdate(`experience.${i}.endDate`, newDates.endDate);
-                        onUpdate(
-                          `experience.${i}.isCurrent`,
-                          newDates.isCurrent
-                        );
-                      }}
-                      showCurrentOption={true}
-                    />
-                    <Editable
-                      tag='p'
-                      className='role'
-                      path={`experience.${i}.role`}
-                      onUpdate={onUpdate}
-                    >
-                      {exp.role}
-                    </Editable>
-                    <Editable
-                      tag='p'
-                      className='company'
-                      path={`experience.${i}.company`}
-                      onUpdate={onUpdate}
-                    >
-                      {exp.company}
-                    </Editable>
-                    <Editable
-                      tag='p'
-                      className='description'
-                      path={`experience.${i}.description`}
-                      onUpdate={onUpdate}
-                      multiline
-                    >
-                      {exp.description}
-                    </Editable>
-                  </div>
-                  <button
-                    className='btn-remove'
-                    onClick={() => onRemove('experience', i)}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Skills */}
-          <div className='skills-section-background'>
-            <div className='section-header'>
-              <h2 className='section-title'>Skills</h2>
-              <button
-                className='btn-add'
-                onClick={() => onAdd('skills', 'New Skill')}
-              >
-                +
-              </button>
-            </div>
-            <div className='skills-grid'>
-              {data.skills.map((skill, i) => (
-                <div
-                  key={i}
-                  className={`entry draggable-item ${
-                    draggedOverSection === 'skills' && draggedOverIndex === i
-                      ? 'drag-over'
-                      : ''
-                  }`}
-                  onDragEnter={() => handleDragEnter('skills', i)}
-                  onDragEnd={handleDragEnd}
-                >
-                  <div
-                    className='drag-handle'
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, 'skills', i)}
-                  >
-                    ::
-                  </div>
+            {/* Contact */}
+            <div className='contact-section-background'>
+              <h2 className='section-title'>Contact</h2>
+              <div className='contact-info'>
+                <p>
+                  📞{' '}
+                  <Editable tag='span' path='contact.phone' onUpdate={onUpdate}>
+                    {data.contact.phone}
+                  </Editable>
+                </p>
+                <p>
+                  📧{' '}
+                  <Editable tag='span' path='contact.email' onUpdate={onUpdate}>
+                    {data.contact.email}
+                  </Editable>
+                </p>
+                <p>
+                  🌐{' '}
                   <Editable
-                    tag='p'
-                    className='skill-item'
-                    path={`skills.${i}`}
+                    tag='span'
+                    path='contact.website'
                     onUpdate={onUpdate}
                   >
-                    {skill}
+                    {data.contact.website}
                   </Editable>
-                  <button
-                    className='btn-remove'
-                    onClick={() => onRemove('skills', i)}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className='bottom-right'>
+            {/* Experience */}
+            <div className='experience-section-background'>
+              <div className='section-header'>
+                <h2 className='section-title'>Experience</h2>
+                <button
+                  className='btn-add'
+                  onClick={() =>
+                    onAdd('experience', {
+                      role: 'Senior Product Designer',
+                      company: 'Company Name',
+                      startDate: '2021-01',
+                      endDate: '',
+                      isCurrent: true,
+                      description: 'Description of work.',
+                    })
+                  }
+                >
+                  +
+                </button>
+              </div>
+              <div className='experience-list'>
+                {data.experience.map((exp, i) => (
+                  <div
+                    key={i}
+                    className={`entry draggable-item ${
+                      draggedOverSection === 'experience' &&
+                      draggedOverIndex === i
+                        ? 'drag-over'
+                        : ''
+                    }`}
+                    onDragEnter={() => handleDragEnter('experience', i)}
+                    onDragEnd={handleDragEnd}
                   >
-                    &times;
-                  </button>
-                </div>
-              ))}
+                    <div
+                      className='drag-handle'
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, 'experience', i)}
+                    >
+                      ::
+                    </div>
+                    <div className='experience-item'>
+                      <EditableDateRange
+                        className='date-range'
+                        startDate={exp.startDate}
+                        endDate={exp.endDate}
+                        isCurrent={exp.isCurrent}
+                        onUpdate={(newDates) => {
+                          onUpdate(
+                            `experience.${i}.startDate`,
+                            newDates.startDate
+                          );
+                          onUpdate(`experience.${i}.endDate`, newDates.endDate);
+                          onUpdate(
+                            `experience.${i}.isCurrent`,
+                            newDates.isCurrent
+                          );
+                        }}
+                        showCurrentOption={true}
+                      />
+                      <Editable
+                        tag='p'
+                        className='role'
+                        path={`experience.${i}.role`}
+                        onUpdate={onUpdate}
+                      >
+                        {exp.role}
+                      </Editable>
+                      <Editable
+                        tag='p'
+                        className='company'
+                        path={`experience.${i}.company`}
+                        onUpdate={onUpdate}
+                      >
+                        {exp.company}
+                      </Editable>
+                      <Editable
+                        tag='p'
+                        className='description'
+                        path={`experience.${i}.description`}
+                        onUpdate={onUpdate}
+                        multiline
+                      >
+                        {exp.description}
+                      </Editable>
+                    </div>
+                    <button
+                      className='btn-remove'
+                      onClick={() => onRemove('experience', i)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Skills */}
+            <div className='skills-section-background'>
+              <div className='section-header'>
+                <h2 className='section-title'>Skills</h2>
+                <button
+                  className='btn-add'
+                  onClick={() => onAdd('skills', 'New Skill')}
+                >
+                  +
+                </button>
+              </div>
+              <div className='skills-grid'>
+                {data.skills.map((skill, i) => (
+                  <div
+                    key={i}
+                    className={`entry draggable-item ${
+                      draggedOverSection === 'skills' && draggedOverIndex === i
+                        ? 'drag-over'
+                        : ''
+                    }`}
+                    onDragEnter={() => handleDragEnter('skills', i)}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <div
+                      className='drag-handle'
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, 'skills', i)}
+                    >
+                      ::
+                    </div>
+                    <Editable
+                      tag='p'
+                      className='skill-item'
+                      path={`skills.${i}`}
+                      onUpdate={onUpdate}
+                    >
+                      {skill}
+                    </Editable>
+                    <button
+                      className='btn-remove'
+                      onClick={() => onRemove('skills', i)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -313,20 +325,32 @@ export default function ThirteenthPreview({
           background-color: #fff;
           box-shadow: var(--shadow);
           padding: 2rem;
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          display: flex;
+          flex-direction: column;
           gap: 1.5rem;
           border-radius: 1rem;
           font-family: 'Inter', sans-serif;
         }
-        .left-column {
-          grid-column: span 1 / span 1;
+        .top-row {
           display: flex;
-          flex-direction: column;
+          gap: 1.5rem;
+          align-items: flex-start;
+        }
+        .top-left {
+          width: 290px;
+          max-width: 290px;
+          flex-shrink: 0;
+        }
+        .top-right {
+          flex: 1;
+        }
+        .bottom-row {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
           gap: 1.5rem;
         }
-        .right-column {
-          grid-column: span 2 / span 2;
+        .bottom-left,
+        .bottom-right {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
@@ -349,12 +373,13 @@ export default function ThirteenthPreview({
           font-weight: 700;
           font-style: Bold;
           font-size: 14px;
+          font-height: 24px;
           letter-spacing: 2px;
           vertical-align: middle;
           text-transform: uppercase;
         }
         .contact-section-background {
-          background-color: #f7f3d7;
+          background-color: #f7f1eb;
           top: 274px;
           left: 24px;
           padding-top: 16px;
@@ -372,7 +397,7 @@ export default function ThirteenthPreview({
           gap: 20px;
         }
         .education-section-background {
-          background-color: #f7f1eb;
+          background-color: #f7f3d7;
           left: 24px;
           padding-top: 16px;
           padding-right: 10px;
@@ -419,20 +444,34 @@ export default function ThirteenthPreview({
         .description {
           color: #4b5563;
         }
+        header {
+          /* No longer needs positioning context */
+        }
         .name {
-          font-size: 1.875rem;
+          font-size: 51px;
           font-weight: 700;
           color: #111827;
         }
         .title {
-          color: #ca8a04;
-          font-weight: 600;
-          font-size: 1.125rem;
+          font-family: 'Urbanist', sans-serif;
+          font-weight: 700;
+          font-size: 52px;
+          line-height: 100%;
+          letter-spacing: 2px;
+          vertical-align: middle;
+          text-transform: uppercase;
+          color: red;
+          margin-top: 0.5rem;
         }
         .summary {
+          font-family: 'Urbanist', sans-serif;
+          font-weight: 500;
+          font-size: 13px;
+          line-height: 19px;
+          letter-spacing: 0px;
+          vertical-align: middle;
           color: #374151;
-          font-size: 0.875rem;
-          margin-top: 0.5rem;
+          margin-top: 1rem;
         }
         .skills-grid {
           display: grid;
@@ -492,6 +531,17 @@ export default function ThirteenthPreview({
           justify-content: space-between;
           align-items: center;
           margin-bottom: 0.5rem;
+        }
+        :global(.editable) {
+          outline: none;
+          padding: 2px 4px;
+          margin: -2px -4px;
+          border-radius: 4px;
+          transition: box-shadow 0.2s;
+        }
+        :global(.editable:focus) {
+          box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.4);
+          background: #fefce8;
         }
       `}</style>
     </div>
