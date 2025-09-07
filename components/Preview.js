@@ -287,6 +287,142 @@ export default function Preview({
             ))}
           </ul>
         </div>
+
+        {/* Languages Section */}
+        <div className='section'>
+          <div className='section-header'>
+            <h3 className='section-title'>Languages</h3>
+            <button
+              className='btn-add'
+              onClick={() =>
+                onAdd('languages', {
+                  language: 'Language',
+                  proficiency: 'Proficiency',
+                })
+              }
+            >
+              + Add
+            </button>
+          </div>
+          <ul className='skills-list'>
+            {data.languages?.map((lang, i) => (
+              <li
+                key={i}
+                className={`draggable-item ${
+                  draggedOverSection === 'languages' && draggedOverIndex === i
+                    ? 'drag-over'
+                    : ''
+                }`.trim()}
+                onDragEnter={() => handleDragEnter('languages', i)}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  className='drag-handle'
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, 'languages', i)}
+                >
+                  ::
+                </div>
+                <Editable
+                  tag='span'
+                  path={`languages.${i}.language`}
+                  onUpdate={onUpdate}
+                >
+                  {lang.language}
+                </Editable>
+                <span className='proficiency'>
+                  (
+                  <Editable
+                    tag='span'
+                    path={`languages.${i}.proficiency`}
+                    onUpdate={onUpdate}
+                  >
+                    {lang.proficiency}
+                  </Editable>
+                  )
+                </span>
+                <button
+                  className='btn-remove'
+                  onClick={() => onRemove('languages', i)}
+                >
+                  &times;
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Awards Section */}
+        <div className='section'>
+          <div className='section-header'>
+            <h3 className='section-title'>Awards</h3>
+            <button
+              className='btn-add'
+              onClick={() =>
+                onAdd('awards', {
+                  name: 'Award Name',
+                  from: 'Awarding Institution',
+                  year: 'Year',
+                })
+              }
+            >
+              + Add
+            </button>
+          </div>
+          {data.awards?.map((award, i) => (
+            <div
+              key={i}
+              className={`entry draggable-item ${
+                draggedOverSection === 'awards' && draggedOverIndex === i
+                  ? 'drag-over'
+                  : ''
+              }`}
+              onDragEnter={() => handleDragEnter('awards', i)}
+              onDragEnd={handleDragEnd}
+            >
+              <div
+                className='drag-handle'
+                draggable
+                onDragStart={(e) => handleDragStart(e, 'awards', i)}
+              >
+                ::
+              </div>
+              <div className='entry-header'>
+                <Editable
+                  tag='strong'
+                  path={`awards.${i}.name`}
+                  onUpdate={onUpdate}
+                >
+                  {award.name}
+                </Editable>
+                <Editable
+                  tag='span'
+                  className='date'
+                  path={`awards.${i}.year`}
+                  onUpdate={onUpdate}
+                >
+                  {award.year}
+                </Editable>
+              </div>
+              <Editable
+                tag='p'
+                className='company'
+                path={`awards.${i}.from`}
+                onUpdate={onUpdate}
+              >
+                {award.from}
+              </Editable>
+              <div className='actions'>
+                <button
+                  className='btn-remove'
+                  onClick={() => onRemove('awards', i)}
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       <style jsx>{`
         .preview-inner {
@@ -436,6 +572,11 @@ export default function Preview({
         .entry p {
           color: #444;
           line-height: 1.6;
+        }
+        .proficiency {
+          margin-left: 0.5rem;
+          color: #555;
+          font-style: italic;
         }
         .skills-list {
           list-style: none;
