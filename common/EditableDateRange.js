@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -21,73 +21,105 @@ export default function EditableDateRange({
   const [localIsCurrent, setLocalIsCurrent] = useState(isCurrent);
   const wrapperRef = useRef(null);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     onUpdate({
       startDate: localStartDate,
       endDate: localIsCurrent ? '' : localEndDate,
       isCurrent: showCurrentOption ? localIsCurrent : false,
     });
     setIsEditing(false);
-  };
+  }, [
+    onUpdate,
+    localStartDate,
+    localEndDate,
+    localIsCurrent,
+    showCurrentOption,
+  ]);
 
-  // Click outside to save and close
+  const handleCancel = useCallback(() => {
+    // Reset state to original props
+    setLocalStartDate(startDate);
+    setLocalEndDate(endDate);
+    setLocalIsCurrent(isCurrent);
+    setIsEditing(false);
+  }, [startDate, endDate, isCurrent]);
+
+  // Click outside to cancel
   useEffect(() => {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         if (isEditing) {
-          handleSave();
+          handleCancel();
         }
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [
-    wrapperRef.current,
-    isEditing,
-    localStartDate,
-    localEndDate,
-    localIsCurrent,
-  ]);
+  }, [wrapperRef, isEditing, handleCancel]);
 
-  if (isEditing) {
-    return (
-      <div className={`date-editor ${className}`} ref={wrapperRef}>
-        <input
-          type='month'
-          value={localStartDate}
-          onChange={(e) => setLocalStartDate(e.target.value)}
-          autoFocus
-        />
-        {!localIsCurrent && (
-          <>
-            <span>-</span>
-            <input
-              type='month'
-              value={localEndDate}
-              onChange={(e) => setLocalEndDate(e.target.value)}
-            />
-          </>
-        )}
-        {showCurrentOption && (
-          <label>
-            <input
-              type='checkbox'
-              checked={localIsCurrent}
-              onChange={(e) => setLocalIsCurrent(e.target.checked)}
-            />
-            Present
-          </label>
-        )}
-      </div>
-    );
-  }
+  // When editing starts, sync local state with current props
+  useEffect(() => {
+    if (isEditing) {
+      setLocalStartDate(startDate);
+      setLocalEndDate(endDate);
+      setLocalIsCurrent(isCurrent);
+    }
+  }, [isEditing, startDate, endDate, isCurrent]);
 
   return (
-    <span
-      onClick={() => setIsEditing(true)}
-      className={`editable ${className}`}
-    >
-      {formatDate(startDate)} - {isCurrent ? 'Present' : formatDate(endDate)}
-    </span>
+    <div className={`date-range-wrapper ${className}`} ref={wrapperRef}>
+      <span
+        onClick={() => setIsEditing(true)}
+        className='editable date-display'
+      >
+        {formatDate(startDate)} - {isCurrent ? 'Present' : formatDate(endDate)}
+      </span>
+
+      {isEditing && (
+        <div className='date-editor-popover'>
+          <div className='date-editor-grid'>
+            <div className='date-editor-field'>
+              <label>Start Date</label>
+              <input
+                type='month'
+                value={localStartDate || ''}
+                onChange={(e) => setLocalStartDate(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className='date-editor-field'>
+              <label>End Date</label>
+              <input
+                type='month'
+                value={localEndDate || ''}
+                onChange={(e) => setLocalEndDate(e.target.value)}
+                disabled={localIsCurrent}
+              />
+            </div>
+          </div>
+
+          <div className='date-editor-footer'>
+            {showCurrentOption && (
+              <label className='date-editor-current-label'>
+                <input
+                  type='checkbox'
+                  checked={localIsCurrent}
+                  onChange={(e) => setLocalIsCurrent(e.target.checked)}
+                />
+                Present
+              </label>
+            )}
+            <div className='date-editor-buttons'>
+              <button onClick={handleCancel} className='btn-cancel'>
+                Cancel
+              </button>
+              <button onClick={handleSave} className='btn-save'>
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
