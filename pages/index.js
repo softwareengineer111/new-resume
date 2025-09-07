@@ -15,6 +15,7 @@ import NinthPreview from '../components/NinthPreview';
 import TenthPreview from '../components/TenthPreview';
 import EleventhPreview from '../components/EleventhPreview';
 import TwelfthPreview from '../components/TwelfthPreview';
+import ThirteenthPreview from '../components/ThirteenthPreview';
 
 // Define templates in a structured way to avoid repetition
 const TEMPLATES = [
@@ -114,6 +115,17 @@ const TEMPLATES = [
     name: 'Artistic',
     component: TwelfthPreview,
     thumbnail: <div className='t12-preview'></div>,
+  },
+  {
+    id: 'thirteenth',
+    name: 'Structured',
+    component: ThirteenthPreview,
+    thumbnail: (
+      <div className='t13-preview'>
+        <div className='t13-left'></div>
+        <div className='t13-right'></div>
+      </div>
+    ),
   },
 ];
 
