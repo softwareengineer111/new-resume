@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import Editable from './Editable';
 import EditableDateRange from './EditableDateRange';
+import { useDragAndDrop } from './useDragAndDrop';
 
 // A formal, academic-style CV layout.
 export default function SeventhPreview({
@@ -10,36 +11,13 @@ export default function SeventhPreview({
   onRemove,
   onReorder,
 }) {
-  const dragItem = useRef(null);
-  const [draggedOverSection, setDraggedOverSection] = useState('');
-  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
-
-  const handleDragStart = (e, section, index) => {
-    dragItem.current = { section, index };
-    setTimeout(() => {
-      e.target.closest('.entry, li').classList.add('dragging');
-    }, 0);
-  };
-
-  const handleDragEnter = (section, index) => {
-    if (dragItem.current && dragItem.current.section === section) {
-      setDraggedOverSection(section);
-      setDraggedOverIndex(index);
-    }
-  };
-
-  const handleDragEnd = (e) => {
-    if (
-      draggedOverIndex !== null &&
-      dragItem.current.index !== draggedOverIndex
-    ) {
-      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
-    }
-    document.querySelector('.dragging')?.classList.remove('dragging');
-    dragItem.current = null;
-    setDraggedOverSection('');
-    setDraggedOverIndex(null);
-  };
+  const {
+    draggedOverSection,
+    draggedOverIndex,
+    handleDragStart,
+    handleDragEnter,
+    handleDragEnd,
+  } = useDragAndDrop(onReorder);
 
   return (
     <div className='panel preview'>
@@ -68,11 +46,11 @@ export default function SeventhPreview({
           {data.education.map((edu, i) => (
             <div
               key={i}
-              className={`entry ${
+              className={`entry draggable-item ${
                 draggedOverSection === 'education' && draggedOverIndex === i
                   ? 'drag-over'
                   : ''
-              }`}
+              }`.trim()}
               onDragEnter={() => handleDragEnter('education', i)}
               onDragEnd={handleDragEnd}
             >
@@ -135,11 +113,11 @@ export default function SeventhPreview({
           {data.experience.map((exp, i) => (
             <div
               key={i}
-              className={`entry ${
+              className={`entry draggable-item ${
                 draggedOverSection === 'experience' && draggedOverIndex === i
                   ? 'drag-over'
                   : ''
-              }`}
+              }`.trim()}
               onDragEnter={() => handleDragEnter('experience', i)}
               onDragEnd={handleDragEnd}
             >
@@ -215,11 +193,11 @@ export default function SeventhPreview({
             {data.skills.map((skill, i) => (
               <li
                 key={i}
-                className={`${
+                className={`draggable-item ${
                   draggedOverSection === 'skills' && draggedOverIndex === i
                     ? 'drag-over'
                     : ''
-                }`}
+                }`.trim()}
                 onDragEnter={() => handleDragEnter('skills', i)}
                 onDragEnd={handleDragEnd}
               >

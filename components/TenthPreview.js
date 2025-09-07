@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import Editable from './Editable';
 import EditableDateRange from './EditableDateRange';
+import { useDragAndDrop } from './useDragAndDrop';
 
 // An ultra-minimalist, text-only layout focusing on typography.
 export default function TenthPreview({
@@ -10,36 +11,13 @@ export default function TenthPreview({
   onRemove,
   onReorder,
 }) {
-  const dragItem = useRef(null);
-  const [draggedOverSection, setDraggedOverSection] = useState('');
-  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
-
-  const handleDragStart = (e, section, index) => {
-    dragItem.current = { section, index };
-    setTimeout(() => {
-      e.target.closest('.entry, .skill-item').classList.add('dragging');
-    }, 0);
-  };
-
-  const handleDragEnter = (section, index) => {
-    if (dragItem.current && dragItem.current.section === section) {
-      setDraggedOverSection(section);
-      setDraggedOverIndex(index);
-    }
-  };
-
-  const handleDragEnd = (e) => {
-    if (
-      draggedOverIndex !== null &&
-      dragItem.current.index !== draggedOverIndex
-    ) {
-      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
-    }
-    document.querySelector('.dragging')?.classList.remove('dragging');
-    dragItem.current = null;
-    setDraggedOverSection('');
-    setDraggedOverIndex(null);
-  };
+  const {
+    draggedOverSection,
+    draggedOverIndex,
+    handleDragStart,
+    handleDragEnter,
+    handleDragEnd,
+  } = useDragAndDrop(onReorder);
 
   return (
     <div className='panel preview'>
@@ -62,11 +40,11 @@ export default function TenthPreview({
           {data.experience.map((exp, i) => (
             <div
               key={i}
-              className={`entry ${
+              className={`entry draggable-item ${
                 draggedOverSection === 'experience' && draggedOverIndex === i
                   ? 'drag-over'
                   : ''
-              }`}
+              }`.trim()}
               onDragEnter={() => handleDragEnter('experience', i)}
               onDragEnd={handleDragEnd}
             >
@@ -141,11 +119,11 @@ export default function TenthPreview({
           {data.education.map((edu, i) => (
             <div
               key={i}
-              className={`entry ${
+              className={`entry draggable-item ${
                 draggedOverSection === 'education' && draggedOverIndex === i
                   ? 'drag-over'
                   : ''
-              }`}
+              }`.trim()}
               onDragEnter={() => handleDragEnter('education', i)}
               onDragEnd={handleDragEnd}
             >
@@ -209,11 +187,11 @@ export default function TenthPreview({
             {data.skills.map((skill, i) => (
               <span
                 key={i}
-                className={`skill-item ${
+                className={`skill-item draggable-item ${
                   draggedOverSection === 'skills' && draggedOverIndex === i
                     ? 'drag-over'
                     : ''
-                }`}
+                }`.trim()}
                 onDragEnter={() => handleDragEnter('skills', i)}
                 onDragEnd={handleDragEnd}
               >
@@ -237,11 +215,11 @@ export default function TenthPreview({
           {data.awards?.map((award, i) => (
             <div
               key={i}
-              className={`entry ${
+              className={`entry draggable-item ${
                 draggedOverSection === 'awards' && draggedOverIndex === i
                   ? 'drag-over'
                   : ''
-              }`}
+              }`.trim()}
               onDragEnter={() => handleDragEnter('awards', i)}
               onDragEnd={handleDragEnd}
             >
@@ -268,11 +246,11 @@ export default function TenthPreview({
             {data.languages?.map((lang, i) => (
               <span
                 key={i}
-                className={`skill-item ${
+                className={`skill-item draggable-item ${
                   draggedOverSection === 'languages' && draggedOverIndex === i
                     ? 'drag-over'
                     : ''
-                }`}
+                }`.trim()}
                 onDragEnter={() => handleDragEnter('languages', i)}
                 onDragEnd={handleDragEnd}
               >

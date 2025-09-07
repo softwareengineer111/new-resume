@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import Editable from './Editable';
 import EditableDateRange from './EditableDateRange';
+import { useDragAndDrop } from './useDragAndDrop';
 
 // A more creative layout with an avatar placeholder and icons.
 export default function FifthPreview({
@@ -10,34 +11,13 @@ export default function FifthPreview({
   onRemove,
   onReorder,
 }) {
-  const dragItem = useRef(null);
-  const [draggedOverSection, setDraggedOverSection] = useState('');
-  const [draggedOverIndex, setDraggedOverIndex] = useState(null);
-
-  const handleDragStart = (e, section, index) => {
-    dragItem.current = { section, index };
-    setTimeout(() => e.target.classList.add('dragging'), 0);
-  };
-
-  const handleDragEnter = (section, index) => {
-    if (dragItem.current && dragItem.current.section === section) {
-      setDraggedOverSection(section);
-      setDraggedOverIndex(index);
-    }
-  };
-
-  const handleDragEnd = (e) => {
-    if (
-      draggedOverIndex !== null &&
-      dragItem.current.index !== draggedOverIndex
-    ) {
-      onReorder(draggedOverSection, dragItem.current.index, draggedOverIndex);
-    }
-    e.target.classList.remove('dragging');
-    dragItem.current = null;
-    setDraggedOverSection('');
-    setDraggedOverIndex(null);
-  };
+  const {
+    draggedOverSection,
+    draggedOverIndex,
+    handleDragStart,
+    handleDragEnter,
+    handleDragEnd,
+  } = useDragAndDrop(onReorder);
 
   return (
     <div className='panel preview'>
@@ -84,11 +64,11 @@ export default function FifthPreview({
                 {data.skills.map((skill, i) => (
                   <li
                     key={i}
-                    className={`${
+                    className={`draggable-item ${
                       draggedOverSection === 'skills' && draggedOverIndex === i
                         ? 'drag-over'
                         : ''
-                    }`}
+                    }`.trim()}
                     draggable
                     onDragStart={(e) => handleDragStart(e, 'skills', i)}
                     onDragEnter={() => handleDragEnter('skills', i)}
@@ -131,12 +111,12 @@ export default function FifthPreview({
               {data.experience.map((exp, i) => (
                 <div key={i} className='entry'>
                   <div
-                    className={`${
+                    className={`draggable-item ${
                       draggedOverSection === 'experience' &&
                       draggedOverIndex === i
                         ? 'drag-over'
                         : ''
-                    }`}
+                    }`.trim()}
                     draggable
                     onDragStart={(e) => handleDragStart(e, 'experience', i)}
                     onDragEnter={() => handleDragEnter('experience', i)}
@@ -144,7 +124,7 @@ export default function FifthPreview({
                   >
                     <Editable
                       tag='strong'
-                      path={`experience.${i}.role`} // This path is now wrong
+                      path={`experience.${i}.role`}
                       onUpdate={onUpdate}
                     >
                       {exp.role}

@@ -181,7 +181,7 @@ export default function Preview({
           {data.education.map((edu, i) => (
             <div
               key={i}
-              className={`entry ${
+              className={`entry draggable-item ${
                 draggedOverSection === 'education' && draggedOverIndex === i
                   ? 'drag-over'
                   : ''
@@ -259,12 +259,11 @@ export default function Preview({
             {data.skills.map((skill, i) => (
               <li
                 key={i}
-                className='draggable-item'
-                className={`${
+                className={`draggable-item ${
                   draggedOverSection === 'skills' && draggedOverIndex === i
                     ? 'drag-over'
                     : ''
-                }`}
+                }`.trim()}
                 onDragEnter={() => handleDragEnter('skills', i)}
                 onDragEnd={handleDragEnd}
               >
