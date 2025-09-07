@@ -30,31 +30,6 @@ export default function ThirteenthPreview({
             )}
           </div>
 
-          {/* Contact */}
-          <div className='contact-section-background'>
-            <h2 className='section-title'>Contact</h2>
-            <div className='contact-info'>
-              <p>
-                📞{' '}
-                <Editable tag='span' path='contact.phone' onUpdate={onUpdate}>
-                  {data.contact.phone}
-                </Editable>
-              </p>
-              <p>
-                📧{' '}
-                <Editable tag='span' path='contact.email' onUpdate={onUpdate}>
-                  {data.contact.email}
-                </Editable>
-              </p>
-              <p>
-                🌐{' '}
-                <Editable tag='span' path='contact.website' onUpdate={onUpdate}>
-                  {data.contact.website}
-                </Editable>
-              </p>
-            </div>
-          </div>
-
           {/* Education */}
           <div className='education-section-background'>
             <div className='section-header'>
@@ -130,6 +105,31 @@ export default function ThirteenthPreview({
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className='contact-section-background'>
+            <h2 className='section-title'>Contact</h2>
+            <div className='contact-info'>
+              <p>
+                📞{' '}
+                <Editable tag='span' path='contact.phone' onUpdate={onUpdate}>
+                  {data.contact.phone}
+                </Editable>
+              </p>
+              <p>
+                📧{' '}
+                <Editable tag='span' path='contact.email' onUpdate={onUpdate}>
+                  {data.contact.email}
+                </Editable>
+              </p>
+              <p>
+                🌐{' '}
+                <Editable tag='span' path='contact.website' onUpdate={onUpdate}>
+                  {data.contact.website}
+                </Editable>
+              </p>
             </div>
           </div>
         </div>
