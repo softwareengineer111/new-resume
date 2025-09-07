@@ -373,12 +373,13 @@ export default function ThirteenthPreview({
           font-weight: 700;
           font-style: Bold;
           font-size: 14px;
+          font-height: 24px;
           letter-spacing: 2px;
           vertical-align: middle;
           text-transform: uppercase;
         }
         .contact-section-background {
-          background-color: #f7f3d7;
+          background-color: #f7f1eb;
           top: 274px;
           left: 24px;
           padding-top: 16px;
@@ -396,7 +397,7 @@ export default function ThirteenthPreview({
           gap: 20px;
         }
         .education-section-background {
-          background-color: #f7f1eb;
+          background-color: #f7f3d7;
           left: 24px;
           padding-top: 16px;
           padding-right: 10px;
