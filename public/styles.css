@@ -153,6 +153,22 @@ body {
   cursor: not-allowed;
 }
 
+.btn.btn-secondary {
+  background: var(--text-secondary);
+  color: white;
+}
+
+.btn.btn-secondary:hover {
+  background: #555;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+}
+
 .actions {
     position: absolute;
     top: -8px;

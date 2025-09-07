@@ -198,7 +198,24 @@ export default function Home() {
   const [resumeId, setResumeId] = useState(null);
   const debounceTimeout = useRef(null);
   const isInitialLoad = useRef(true);
+  const lastSavedData = useRef(null); // To track the last successfully saved state
 
+  const startNewResume = () => {
+    if (
+      window.confirm(
+        'Are you sure you want to clear everything and start a new resume?'
+      )
+    ) {
+      // Generate a new ID, save it, and reset the data state.
+      const newId = uuidv4();
+      localStorage.setItem('resumeId', newId);
+      setResumeId(newId);
+      setData(initialData);
+      lastSavedData.current = initialData; // Reset last saved state
+      setSaveStatus('New resume created');
+      isInitialLoad.current = true; // Prevent autosave of initial data
+    }
+  };
   function update(path, value) {
     setData((prev) => {
       // Use structuredClone for a true deep copy, preventing mutation bugs.
@@ -297,6 +314,7 @@ export default function Home() {
       ]);
 
       setData(loadedData);
+      lastSavedData.current = loadedData; // Set initial saved state
     };
 
     loadInitialData();
@@ -313,6 +331,13 @@ export default function Home() {
       return;
     }
 
+    // Small optimization: don't enter "Saving..." state if data hasn't changed.
+    // Using JSON.stringify for deep comparison is pragmatic for this data structure.
+    // For very large or complex objects, a library like `fast-deep-equal` might be more performant.
+    if (JSON.stringify(data) === JSON.stringify(lastSavedData.current)) {
+      return;
+    }
+
     setSaveStatus('Saving...');
 
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
@@ -324,7 +349,12 @@ export default function Home() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ resumeId, resumeData: data }),
         });
-        setSaveStatus(res.ok ? 'Saved' : 'Error saving');
+        if (res.ok) {
+          setSaveStatus('Saved');
+          lastSavedData.current = data; // Update last saved state on success
+        } else {
+          setSaveStatus('Error saving');
+        }
       } catch (error) {
         setSaveStatus(
           error.name === 'AbortError' ? 'Error: Save timed out' : 'Error saving'
@@ -335,6 +365,29 @@ export default function Home() {
 
     return () => clearTimeout(debounceTimeout.current);
   }, [data, resumeId]); // This effect runs whenever 'data' or 'resumeId' changes
+
+  // Effect for saving any final changes when the user leaves the page
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Use a deep comparison to see if there are unsaved changes.
+      if (
+        data &&
+        JSON.stringify(data) !== JSON.stringify(lastSavedData.current)
+      ) {
+        // Use sendBeacon for a reliable, non-blocking request on unload.
+        // Note: This is a "fire and forget" request. We don't get a response.
+        const payload = new Blob(
+          [JSON.stringify({ resumeId, resumeData: data })],
+          { type: 'application/json' }
+        );
+        navigator.sendBeacon('/api/resume', payload);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [data, resumeId]);
 
   const downloadPdf = () => {
     const resumeElement = document.querySelector('.preview');
@@ -412,7 +465,7 @@ export default function Home() {
     <div className='app'>
       <div className='editor'>
         <div className='panel'>
-          <h3>Загвар сонгох</h3>
+          <h3>Удирдах самбар</h3>
           <div className='template-selector'>
             {TEMPLATES.map((t) => (
               <div
@@ -427,14 +480,14 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <button
-            className='btn'
-            onClick={downloadPdf}
-            disabled={pdfLoading}
-            style={{ width: '100%', marginTop: '1rem' }}
-          >
-            {pdfLoading ? 'Generating PDF...' : 'Download as PDF'}
-          </button>
+          <div className='editor-actions'>
+            <button className='btn' onClick={downloadPdf} disabled={pdfLoading}>
+              {pdfLoading ? 'Generating PDF...' : 'Download as PDF'}
+            </button>
+            <button className='btn btn-secondary' onClick={startNewResume}>
+              Цэвэрлэх
+            </button>
+          </div>
           <div className='save-status'>{saveStatus}</div>
         </div>
       </div>
