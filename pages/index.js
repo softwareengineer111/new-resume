@@ -244,49 +244,62 @@ export default function Home() {
 
   // Effect to fetch initial data from the database
   useEffect(() => {
-    let id = localStorage.getItem('resumeId');
+    const loadInitialData = async () => {
+      // This promise ensures the loading indicator is shown for at least 1.5s
+      const minDelayPromise = new Promise((resolve) =>
+        setTimeout(resolve, 500)
+      );
 
-    const loadResume = async (resumeIdToLoad) => {
-      setResumeId(resumeIdToLoad);
-      setSaveStatus('Loading...');
-      try {
-        const res = await apiCall(`/api/resume?id=${resumeIdToLoad}`);
-        isInitialLoad.current = true; // Prevent autosave on this initial load
+      const dataFetchPromise = (async () => {
+        let id = localStorage.getItem('resumeId');
+        if (!id) {
+          // First-time visit: generate a new ID and use initial data.
+          id = uuidv4();
+          localStorage.setItem('resumeId', id);
+          setResumeId(id);
+          setSaveStatus('New resume created');
+          isInitialLoad.current = true; // Prevent autosave on this initial setup
+          return initialData;
+        }
 
-        if (res.ok) {
-          const dbData = await res.json();
-          setData(dbData);
-          setSaveStatus('Loaded');
-        } else {
+        // Returning user: fetch their data from the database.
+        setResumeId(id);
+        setSaveStatus('Loading...');
+        try {
+          const res = await apiCall(`/api/resume?id=${id}`);
+          isInitialLoad.current = true; // Prevent autosave on this initial load
+
+          if (res.ok) {
+            const dbData = await res.json();
+            setSaveStatus('Loaded');
+            return dbData;
+          }
           // If not found in DB (e.g., cleared DB), treat as a new resume.
-          setData(initialData);
-          setSaveStatus('Loaded'); // Still "Loaded", just with initial data
+          setSaveStatus('Loaded');
+          return initialData;
+        } catch (error) {
+          isInitialLoad.current = true; // Prevent autosave on this failed load
+          if (error.name === 'AbortError') {
+            setSaveStatus('Server is not responding. Working offline.');
+          } else {
+            setSaveStatus('Error loading data. Working offline.');
+          }
+          console.error('Failed to fetch resume:', error);
+          // On network error or timeout, use initial data as a fallback.
+          return initialData;
         }
-      } catch (error) {
-        isInitialLoad.current = true; // Prevent autosave on this failed load
-        if (error.name === 'AbortError') {
-          setSaveStatus('Server is not responding. Working offline.');
-        } else {
-          setSaveStatus('Error loading data. Working offline.');
-        }
-        console.error('Failed to fetch resume:', error);
-        // On network error or timeout, use initial data as a fallback.
-        setData(initialData);
-      }
+      })();
+
+      // Wait for both the data to be fetched and the minimum delay to pass.
+      const [loadedData] = await Promise.all([
+        dataFetchPromise,
+        minDelayPromise,
+      ]);
+
+      setData(loadedData);
     };
 
-    if (!id) {
-      // First-time visit for this browser: generate a new ID and use initial data.
-      id = uuidv4();
-      localStorage.setItem('resumeId', id);
-      setResumeId(id);
-      setData(initialData);
-      setSaveStatus('New resume created');
-      isInitialLoad.current = true; // Prevent autosave
-    } else {
-      // Returning user: fetch their data from the database.
-      loadResume(id);
-    }
+    loadInitialData();
   }, []); // Empty dependency array means this runs once on mount
 
   // Effect for autosaving with debouncing
@@ -427,7 +440,7 @@ export default function Home() {
       </div>
 
       {!data ? (
-        <div>Loading...</div>
+        <div className='loading-indicator'>Loading...</div>
       ) : (
         <CurrentPreviewComponent {...commonPreviewProps} />
       )}

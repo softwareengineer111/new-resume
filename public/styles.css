@@ -608,3 +608,13 @@ body {
   background: #e5e7eb;
   border-radius: 4px;
 }
+
+/* 9. Loading Indicator */
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+}
